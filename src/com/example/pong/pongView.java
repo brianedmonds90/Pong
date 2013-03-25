@@ -7,6 +7,7 @@ import android.graphics.Paint;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
+///Users/Brian/Downloads/android-ndk-r8e/ndk-build
 
 public class pongView extends View{
 	MultiTouchController mController;

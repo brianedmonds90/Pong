@@ -17,17 +17,15 @@ float x=0,y=0;
     this.x+=delta.x;
     this.y+=delta.y;
   }
-    void set(pt p){
-   this.x=p.x;
-   this.y=p.y; 
- 
+   void set(pt p){
+	   this.x=p.x;
+	   this.y=p.y; 
   }
   void draw(){
    //fill(255,0,00);
     //ellipse(this.x,this.y,5,5);
   }
   void show(Canvas canvas,Paint p){
-      //p.setColor(Color.RED);
       canvas.drawCircle(this.x,this.y,15, p);
   }
   pt (pt P) {x = P.x; y = P.y;};
