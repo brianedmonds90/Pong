@@ -3,6 +3,7 @@ package com.example.pong;
 import java.util.ArrayList;
 
 import android.graphics.Canvas;
+import android.graphics.Paint;
 import android.view.MotionEvent;
 
 class MultiTouchController{//Used to process the android API touch events for easy use by applications
@@ -41,8 +42,7 @@ class MultiTouchController{//Used to process the android API touch events for ea
         temp.selected=true;
         temp.meIndex=pointerId;
         temp.lastTouch=cTouch; //Keep track of the touch location for movement
-        //temp.history.add(temp.disk);
-        System.out.println("Selection touch event");
+        temp.history.add(new pt(temp.disk.x,temp.disk.y));
      }
     }
     
@@ -84,6 +84,7 @@ class MultiTouchController{//Used to process the android API touch events for ea
           //calculate the distance moved from the previous frame and move the point
           temp.disk.move(temp.currentTouch.subtract(temp.lastTouch));
           temp.lastTouch.set(temp.currentTouch);
+          temp.history.add(new pt(temp.disk.x,temp.disk.y));
         }
     }
   } 
@@ -128,5 +129,9 @@ class MultiTouchController{//Used to process the android API touch events for ea
  float d(pt P, pt Q) {return (float) Math.sqrt(d2(P,Q));  };                                                       // ||AB|| (Distance)
  float d2(pt P, pt Q) {
 	 return (float) (Math.pow((Q.x-P.x),2)+Math.pow((Q.y-P.y),2)); };                                             // AB*AB (Distance squared)
+	 
+	 void drawHistoryOf(int index,Canvas c,Paint p){
+		 mTContainer.get(index).drawHistory(c, p);
+	 }
 }
 

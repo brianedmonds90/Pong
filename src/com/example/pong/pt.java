@@ -1,5 +1,9 @@
 package com.example.pong;
 
+import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.Paint;
+
 class pt{
 float x=0,y=0; 
   pt (float px, float py) {x = px; y = py;};
@@ -22,6 +26,10 @@ float x=0,y=0;
    //fill(255,0,00);
     //ellipse(this.x,this.y,5,5);
   }
+  void show(Canvas canvas,Paint p){
+      //p.setColor(Color.RED);
+      canvas.drawCircle(this.x,this.y,15, p);
+  }
   pt (pt P) {x = P.x; y = P.y;};
   pt setTo(float px, float py) {x = px; y = py; return this;};  
   pt setTo(pt P) {x = P.x; y = P.y; return this;}; 
@@ -32,11 +40,18 @@ float x=0,y=0;
   pt add(float s, pt P)   {x += s*P.x; y += s*P.y; return this;};   
 //  pt add(vec V) {x += V.x; y += V.y; return this;}                              
 //  pt add(float s, vec V) {x += s*V.x; y += s*V.y; return this;}                 
-  void show() {
-	  //ellipse(x,y,3,3); return this;
-	  }                 
+                
     
   public String toString(){
    return x+", "+y+" "; 
   }
-  } // end of pt class
+  float d(pt Q) {return (float) Math.sqrt(d2(Q));  };                                                       // ||AB|| (Distance)
+	float d2(pt Q) {
+	return (float) (Math.pow((Q.x-this.x),2)+Math.pow((Q.y-this.y),2)); };                                             // AB*AB (Distance squared)
+	pt P(pt P, vec V) {
+		return P(P.x + V.x, P.y + V.y); 
+	}                                                 //  P+V (P transalted by vector V)
+	pt P(float x, float y) {return new pt(x,y); };                                                       // make point (x,y)
+} // end of pt class
+
+	

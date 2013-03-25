@@ -1,5 +1,7 @@
 package com.example.pong;
 
+import java.util.ArrayList;
+
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
@@ -8,14 +10,14 @@ class MultiTouch{
   boolean selected;
   int meIndex;
   pt movement; 
-
+  ArrayList <pt>history;
   MultiTouch(){
    currentTouch=new pt();
    lastTouch= new pt();
    disk=new pt();
    selected=false;
    meIndex=-1;
-
+   history=new ArrayList<pt>();
 
   }
   MultiTouch(float x,float y){
@@ -24,6 +26,7 @@ class MultiTouch{
    disk=new pt(x,y);
    selected=false;
    meIndex=-1;
+   history=new ArrayList<pt>();
 
   }
   void lift(){
@@ -38,10 +41,7 @@ class MultiTouch{
      if(this.selected){
        p.setColor(Color.RED);
        canvas.drawCircle(this.disk.x,this.disk.y,15, p);
-       
-       System.out.println("Brian: Anything Selected");
-    	// fill(0,255,0);
-       //ellipse(this.disk.x,this.disk.y,15,15);
+
      }
      else{
     	 p.setColor(Color.BLACK);
@@ -54,5 +54,10 @@ class MultiTouch{
     ret+= " currentTouch: "+currentTouch+" lastTouch: "+lastTouch+" meIndex: "+meIndex+ "Selected: "+selected;
    return ret; 
   }
-
+  void drawHistory(Canvas c,Paint p){
+	  
+	  for(pt a: history){
+		  c.drawCircle(a.x,a.y,15, p);
+	  }
+  }
 }

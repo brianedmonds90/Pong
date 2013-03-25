@@ -11,6 +11,8 @@ import android.view.View;
 public class pongView extends View{
 	MultiTouchController mController;
 	Paint p;
+	Paddle a,b;
+	pt p1L,p1R,p2L,p2R;
 	 public pongView(Context context) {
 	    	this(context, null, 0);	
 	    }  
@@ -22,11 +24,27 @@ public class pongView extends View{
 	        mController=new MultiTouchController();
 	        mController.init();
 	        p=new Paint();
+	        a=new Paddle();
+	        b=new Paddle();
+	        p1L=new pt();p2L=new pt();p1R=new pt();p2R=new pt();
 	    }
 	    @Override
 	    public void onDraw(Canvas canvas) {
 	       canvas.save();
-	       mController.show(canvas);
+	      // mController.show(canvas);
+	       a.setToFingers(mController.getMultiTouchAt(0), mController.getMultiTouchAt(1));
+	       b.setToFingers(mController.getMultiTouchAt(2), mController.getMultiTouchAt(3));
+	       try{
+	    	   System.out.println("paddle a: "+a.p1.toString());
+	    	   System.out.println("paddle b: "+b.p2.toString());
+	       }
+	       catch(Exception e){
+	    	   e.printStackTrace();
+	       }
+	       p.setColor(Color.RED);
+	       a.showAll(canvas,p);
+	       p.setColor(Color.BLUE);
+	       b.showAll(canvas,p);
 	       canvas.restore();
 	       super.onDraw(canvas);
 	    }
@@ -35,7 +53,6 @@ public class pongView extends View{
 		int action= whichAction(me);
 		    if (action==1) {
 		        mController.touch(me, whichFinger(me)); //Register the touch event
-		        System.out.println("Brian Says: Touch event");
 		        invalidate();
 	          
 		    }
@@ -45,6 +62,7 @@ public class pongView extends View{
 		    }
 		    else if (action==2) {
 		      mController.motion(me);//Register the motion event
+		      
 		      invalidate();
 //		      if(record)
 //		        updateHistory();
@@ -66,5 +84,7 @@ int whichAction(MotionEvent me) { // 1=press, 0=release, 2=drag
 	  int pointerId = me.getPointerId(pointerIndex);
 	  return pointerId;
 	}
+
+
 
 }
