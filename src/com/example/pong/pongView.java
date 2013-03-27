@@ -14,6 +14,12 @@ public class pongView extends View{
 	Paint p;
 	Paddle a,b;
 	pt p1L,p1R,p2L,p2R;
+	PhysicsWorld pWorld;
+	public pongView(Context context, PhysicsWorld pWorld){
+		this(context);
+		this.pWorld = pWorld;
+	}
+	
 	 public pongView(Context context) {
 	    	this(context, null, 0);	
 	    }  
@@ -32,20 +38,22 @@ public class pongView extends View{
 	    @Override
 	    public void onDraw(Canvas canvas) {
 	       canvas.save();
+	       pWorld.draw(canvas,p);
+	       pWorld.update();
 	      // mController.show(canvas);
-	       a.setToFingers(mController.getMultiTouchAt(0), mController.getMultiTouchAt(1));
-	       b.setToFingers(mController.getMultiTouchAt(2), mController.getMultiTouchAt(3));
-	       try{
-	    	   System.out.println("paddle a: "+a.p1.toString());
-	    	   System.out.println("paddle b: "+b.p2.toString());
-	       }
-	       catch(Exception e){
-	    	   e.printStackTrace();
-	       }
-	       p.setColor(Color.RED);
-	       a.showAll(canvas,p);
-	       p.setColor(Color.BLUE);
-	       b.showAll(canvas,p);
+//	       a.setToFingers(mController.getMultiTouchAt(0), mController.getMultiTouchAt(1));
+//	       b.setToFingers(mController.getMultiTouchAt(2), mController.getMultiTouchAt(3));
+//	       try{
+//	    	   System.out.println("paddle a: "+a.p1.toString());
+//	    	   System.out.println("paddle b: "+b.p2.toString());
+//	       }
+//	       catch(Exception e){
+//	    	   e.printStackTrace();
+//	       }
+//	       p.setColor(Color.RED);
+//	       a.showAll(canvas,p);
+//	       p.setColor(Color.BLUE);
+//	       b.showAll(canvas,p);
 	       canvas.restore();
 	       super.onDraw(canvas);
 	    }
@@ -85,7 +93,4 @@ int whichAction(MotionEvent me) { // 1=press, 0=release, 2=drag
 	  int pointerId = me.getPointerId(pointerIndex);
 	  return pointerId;
 	}
-
-
-
 }
