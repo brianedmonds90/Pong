@@ -6,8 +6,9 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
+import android.view.SurfaceHolder;
+import android.view.SurfaceView;
 import android.view.View;
-///Users/Brian/Downloads/android-ndk-r8e/ndk-build
 
 public class pongView extends View{
 	MultiTouchController mController;
@@ -15,6 +16,8 @@ public class pongView extends View{
 	Paddle a,b;
 	pt p1L,p1R,p2L,p2R;
 	PhysicsWorld pWorld;
+	PhysicsWorld game;
+	float screenWidth,screenHeight;//Height and width in pixels
 	public pongView(Context context, PhysicsWorld pWorld){
 		this(context);
 		this.pWorld = pWorld;
@@ -31,31 +34,25 @@ public class pongView extends View{
 	        mController=new MultiTouchController();
 	        mController.init();
 	        p=new Paint();
-	        a=new Paddle();
-	        b=new Paddle();
-	        p1L=new pt();p2L=new pt();p1R=new pt();p2R=new pt();
+	        game=new PhysicsWorld();
+	        game.init();
+	        
 	    }
 	    @Override
 	    public void onDraw(Canvas canvas) {
+
 	       canvas.save();
-	       pWorld.draw(canvas,p);
-	       pWorld.update();
-	      // mController.show(canvas);
-//	       a.setToFingers(mController.getMultiTouchAt(0), mController.getMultiTouchAt(1));
-//	       b.setToFingers(mController.getMultiTouchAt(2), mController.getMultiTouchAt(3));
-//	       try{
-//	    	   System.out.println("paddle a: "+a.p1.toString());
-//	    	   System.out.println("paddle b: "+b.p2.toString());
-//	       }
-//	       catch(Exception e){
-//	    	   e.printStackTrace();
-//	       }
-//	       p.setColor(Color.RED);
-//	       a.showAll(canvas,p);
-//	       p.setColor(Color.BLUE);
-//	       b.showAll(canvas,p);
+	       p.setColor(Color.BLACK);
+	      // canvas.drawCircle(100, 200, 100, p);
+	       game.draw(canvas, p);
+	       screenWidth = canvas.getWidth();
+	        screenHeight= canvas.getHeight();
+	        System.out.println("ScreenWidth: "+screenWidth);
+	        System.out.println("ScreenHeight: "+screenHeight);
 	       canvas.restore();
 	       super.onDraw(canvas);
+	       game.update();
+	       invalidate();
 	    }
 	 @Override
 	 public boolean onTouchEvent(MotionEvent me) {
@@ -93,4 +90,11 @@ int whichAction(MotionEvent me) { // 1=press, 0=release, 2=drag
 	  int pointerId = me.getPointerId(pointerIndex);
 	  return pointerId;
 	}
+	public void runGame(){
+
+	}
+	public void pauseGame(){
+		
+	}
+
 }
