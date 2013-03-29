@@ -1,6 +1,9 @@
 package com.example.pong;
 
+import java.util.ArrayList;
+
 import org.jbox2d.collision.shapes.EdgeShape;
+import org.jbox2d.common.Vec2;
 import org.jbox2d.dynamics.Body;
 
 import android.content.Context;
@@ -44,14 +47,16 @@ public class pongView extends View{
 	    }
 	    @Override
 	    public void onDraw(Canvas canvas) {
-
-	       canvas.save();
-	       p.setColor(Color.BLACK);
-	       setScreenWidth(canvas);setScreenHeight(canvas);
-	       drawGame(canvas, p);
-	       canvas.restore();
-	       super.onDraw(canvas);
-	       game.update();
+	    	game.update();
+	    	
+	    	super.onDraw(canvas);
+		    canvas.save();
+		    p.setColor(Color.BLACK);
+		    setScreenWidth(canvas);
+		    setScreenHeight(canvas);
+		    drawGame(canvas, p);
+		    canvas.restore();
+	       
 	       invalidate();
 	    }
 	 @Override
@@ -74,14 +79,16 @@ public class pongView extends View{
 		   
 	    return true;
 	 }
-int whichAction(MotionEvent me) { // 1=press, 0=release, 2=drag
-	  int action = me.getAction(); 
-	  int aaction = action & MotionEvent.ACTION_MASK;
-	  int what=0;
-	  if (aaction==MotionEvent.ACTION_POINTER_UP || aaction==MotionEvent.ACTION_UP) what=0;
-	  if (aaction==MotionEvent.ACTION_DOWN || aaction==MotionEvent.ACTION_POINTER_DOWN) what=1;
-	  if (aaction==MotionEvent.ACTION_MOVE) what=2;
-	  return what;
+	
+	 
+	int whichAction(MotionEvent me) { // 1=press, 0=release, 2=drag
+		  int action = me.getAction(); 
+		  int aaction = action & MotionEvent.ACTION_MASK;
+		  int what=0;
+		  if (aaction==MotionEvent.ACTION_POINTER_UP || aaction==MotionEvent.ACTION_UP) what=0;
+		  if (aaction==MotionEvent.ACTION_DOWN || aaction==MotionEvent.ACTION_POINTER_DOWN) what=1;
+		  if (aaction==MotionEvent.ACTION_MOVE) what=2;
+		  return what;
 	}  
 	int whichFinger(MotionEvent me) {
 	  int pointerIndex = (me.getAction() & MotionEvent.ACTION_POINTER_INDEX_MASK)>> MotionEvent.ACTION_POINTER_INDEX_SHIFT;
@@ -97,25 +104,43 @@ int whichAction(MotionEvent me) { // 1=press, 0=release, 2=drag
 	
 	//***Drawing Functions
 	void drawGame(Canvas canvas,Paint p){
-		Body list=game.getBodyList();
-		while(list!=null){
-		 if(list.m_userData=="circle"){
-			 canvas.drawCircle(toScreenX(list.getPosition().x),toScreenY(list.getPosition().y), 20, p);
-		 } 
-		 if(list.m_userData=="box"){
-			 p.setColor(Color.RED);
-			
-			 //canvas.drawRect(10, 10, 15, 200, p);
-			 canvas.drawCircle(toScreenX(list.getPosition().x),toScreenY(list.getPosition().y),15, p);
-		 }
-		 list=list.getNext();
+		
+		
+		//Draw the edges of the game surface
+		ArrayList<EdgeShape> edges = game.getEdges();
+		p.setColor(Color.BLUE);
+		p.setStrokeWidth(15f);
+		p.setStyle(Paint.Style.STROKE);
+		
+		for(EdgeShape edge : game.getEdges()){
+			Vec2 v1 = edge.m_vertex1;
+			Vec2 v2 = edge.m_vertex2;
+			canvas.drawLine(toScreenX(v1.x), toScreenY(v1.y), toScreenX(v2.x), toScreenY(v2.y), p);
 		}
+		//End drawing edges
+		
+		Body list=game.getBodyList();
+		
+		p.setStyle(Paint.Style.FILL);
+		while(list!=null){
+			if(list.m_userData=="circle"){
+				p.setColor(Color.BLACK);
+				canvas.drawCircle(toScreenX(list.getPosition().x),toScreenY(list.getPosition().y), 20, p);
+			}
+			if(list.m_userData=="box"){
+				p.setColor(Color.RED);
+				//canvas.drawRect(10, 10, 15, 200, p);
+				canvas.drawCircle(toScreenX(list.getPosition().x),toScreenY(list.getPosition().y),15, p);
+			}
+			list=list.getNext();
+		}
+		
+		
 	}
 	private float toScreenX(float x){	  
 	  return (float) (x*(screenWidth/20.0));
 	}
 	private float toScreenY(float y) {
-		// TODO Auto-generated method stub
 		return (float) (y*(screenHeight/40.0));
 	}
 	float getScreenWidth(Canvas c){
@@ -125,10 +150,10 @@ int whichAction(MotionEvent me) { // 1=press, 0=release, 2=drag
 		return c.getHeight();
 	}
 	void setScreenWidth(Canvas c){
-			screenWidth= c.getWidth();
+		screenWidth= c.getWidth();
 	}
 	void setScreenHeight(Canvas c){
-			screenHeight=c.getHeight();
+		screenHeight=c.getHeight();
 	}
 	void drawPaddle(Body paddle,Canvas c,Paint p){
 		c.drawCircle(toScreenX(paddle.getPosition().x),toScreenY(paddle.getPosition().y),10,p);

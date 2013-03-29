@@ -1,5 +1,7 @@
 package com.example.pong;
 
+import java.util.ArrayList;
+
 import org.jbox2d.collision.shapes.CircleShape;
 import org.jbox2d.collision.shapes.EdgeShape;
 import org.jbox2d.collision.shapes.PolygonShape;
@@ -15,8 +17,14 @@ public class PhysicsWorld {
 	private World m_world;
 	float timeStep;
 	int velocityIterations = 6;
-	EdgeShape edge,edge1,edge2,edge3;
+	
+	//Maintain a list of edges as they wont move
+	private ArrayList<EdgeShape> edges = new ArrayList<EdgeShape>();
 	int positionIterations = 2;
+	
+	public static final float OFFSET = 0.15f;
+	public static final float WIDTH = 20.0f;
+	public static final float HEIGHT = 36.5f;
 	
 	public PhysicsWorld(){
 		
@@ -40,7 +48,7 @@ public class PhysicsWorld {
 		      body.createFixture(polygonShape, 5.0f);
 
 		      //body.applyForce(new Vec2(-10000 * (i - 1), 0), new Vec2());
-		    }
+		}
 			getWorld().setGravity(new Vec2(0,0));
 		    CircleShape circle = new CircleShape();
 		    circle.m_radius=1;
@@ -53,10 +61,13 @@ public class PhysicsWorld {
 		    Body circleBody = getWorld().createBody(circleDef);
 		    circleBody.createFixture(circle, 5.0f);
 		    
+		    
+		    //GAME SURFACE EDGES
 			BodyDef edgeDef=new BodyDef();
 			edgeDef.type=BodyType.STATIC;
 			EdgeShape edge=new EdgeShape();
-			edge.set(new Vec2(0, 0),new Vec2(20,0));
+			edge.set(new Vec2(OFFSET,OFFSET),new Vec2(WIDTH-OFFSET,OFFSET));
+			edges.add(edge);
 			
 			Body edgeBody=getWorld().createBody(edgeDef);
 			edgeBody.createFixture(edge, 0).m_restitution=1;
@@ -64,7 +75,8 @@ public class PhysicsWorld {
 			BodyDef edgeDef1=new BodyDef();
 			edgeDef1.type=BodyType.STATIC;
 			EdgeShape edge1=new EdgeShape();
-			edge1.set(new Vec2(0, 0),new Vec2(0,40));
+			edge1.set(new Vec2(OFFSET, OFFSET),new Vec2(OFFSET,HEIGHT-OFFSET));
+			edges.add(edge1);
 			
 			Body edgeBody1=getWorld().createBody(edgeDef1);
 			edgeBody1.createFixture(edge1, 0).m_restitution=1;
@@ -72,7 +84,8 @@ public class PhysicsWorld {
 			BodyDef edgeDef2=new BodyDef();
 			edgeDef2.type=BodyType.STATIC;
 			EdgeShape edge2=new EdgeShape();
-			edge2.set(new Vec2(0, 40),new Vec2(20,40));
+			edge2.set(new Vec2(OFFSET, HEIGHT-OFFSET),new Vec2(WIDTH-OFFSET,HEIGHT-OFFSET));
+			edges.add(edge2);
 			
 			Body edgeBody2=getWorld().createBody(edgeDef2);
 			edgeBody2.createFixture(edge2, 0).m_restitution=1;
@@ -81,12 +94,23 @@ public class PhysicsWorld {
 			edgeDef3.type=BodyType.STATIC;
 			EdgeShape edge3=new EdgeShape();
 		
-			edge3.set(new Vec2(20, 40),new Vec2(20,0));
+			edge3.set(new Vec2(WIDTH-OFFSET, HEIGHT-OFFSET),new Vec2(WIDTH-OFFSET,OFFSET));
+			edges.add(edge3);
 			
 			Body edgeBody3=getWorld().createBody(edgeDef3);
 			
 			edgeBody3.createFixture(edge3, 0).m_restitution=1;
+			//END GAME SURFACE EDGES
 	}
+	
+	public ArrayList<EdgeShape> getEdges(){
+		return this.edges;
+	}
+	
+	public EdgeShape getEdge(int i){
+		return edges.get(i);
+	}
+	
 	/**
 	   * Gets the current world
 	   * 
@@ -100,6 +124,6 @@ public class PhysicsWorld {
 	  }
 	  public void update(){
 		  m_world.step(timeStep, velocityIterations, positionIterations);
-	  }
+	  } 
 	
 }
