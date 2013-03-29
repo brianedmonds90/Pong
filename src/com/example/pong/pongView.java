@@ -102,18 +102,23 @@ int whichAction(MotionEvent me) { // 1=press, 0=release, 2=drag
 		 if(list.m_userData=="circle"){
 			 canvas.drawCircle(toScreenX(list.getPosition().x),toScreenY(list.getPosition().y), 20, p);
 		 } 
+		 if(list.m_userData=="box"){
+			 p.setColor(Color.RED);
+			
+			 //canvas.drawRect(10, 10, 15, 200, p);
+			 canvas.drawCircle(toScreenX(list.getPosition().x),toScreenY(list.getPosition().y),15, p);
+		 }
 		 list=list.getNext();
 		}
 	}
-  private float toScreenX(float x){
-		  
+	private float toScreenX(float x){	  
 	  return (float) (x*(screenWidth/20.0));
-  }
-  private float toScreenY(float y) {
+	}
+	private float toScreenY(float y) {
 		// TODO Auto-generated method stub
 		return (float) (y*(screenHeight/40.0));
 	}
-  float getScreenWidth(Canvas c){
+	float getScreenWidth(Canvas c){
 		return c.getWidth();
 	}
 	float getScreenHeight(Canvas c){
@@ -125,14 +130,7 @@ int whichAction(MotionEvent me) { // 1=press, 0=release, 2=drag
 	void setScreenHeight(Canvas c){
 			screenHeight=c.getHeight();
 	}
-//	  void drawEdge(EdgeShape edge,Canvas canvas,Paint p){
-//		 p.setStrokeWidth(5);
-////		 canvas.drawLine(edge.,toScreenY(edge.m_vertex0.y), 
-////				 toScreenX(edge.m_vertex1.x), toScreenY(edge.m_vertex1.y), p);
-//	  }
-////	  void drawEdges(Canvas canvas,Paint p){
-////		  	p.setColor(Color.RED);
-////			  drawEdge(edge,canvas,p);
-////	  }
-
+	void drawPaddle(Body paddle,Canvas c,Paint p){
+		c.drawCircle(toScreenX(paddle.getPosition().x),toScreenY(paddle.getPosition().y),10,p);
+	}
 }
