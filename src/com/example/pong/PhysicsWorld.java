@@ -94,20 +94,7 @@ public class PhysicsWorld {
 
 	}
 	
-	void draw(Canvas canvas,Paint p){
-		Body list=getBodyList();
-		while(list!=null){
-		 if(list.m_userData=="circle"){
-			 canvas.drawCircle(toScreenX(list.getPosition().x),toScreenY(list.getPosition().y), 20, p);
-		 }
-		 
-		
-		 
-		 list=list.getNext();
-		}
-		drawEdges(canvas,p);
-		//need to implement
-	}
+
 
 	/**
 	   * Gets the current world
@@ -123,21 +110,5 @@ public class PhysicsWorld {
 	  public void update(){
 		  m_world.step(timeStep, velocityIterations, positionIterations);
 	  }
-	  float toScreenX(float x){
-		  
-		  return (float) (x*(36));
-	  }
-	  private float toScreenY(float y) {
-		// TODO Auto-generated method stub
-		return (float) (y*28.35);
-	}
-	  void drawEdge(EdgeShape edge,Canvas canvas,Paint p){
-		 p.setStrokeWidth(5);
-//		 canvas.drawLine(edge.,toScreenY(edge.m_vertex0.y), 
-//				 toScreenX(edge.m_vertex1.x), toScreenY(edge.m_vertex1.y), p);
-	  }
-	  void drawEdges(Canvas canvas,Paint p){
-		  	p.setColor(Color.RED);
-			  drawEdge(edge,canvas,p);
-	  }
+	
 }
