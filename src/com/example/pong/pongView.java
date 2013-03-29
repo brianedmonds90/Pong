@@ -109,7 +109,7 @@ public class pongView extends View{
 		//Draw the edges of the game surface
 		ArrayList<EdgeShape> edges = game.getEdges();
 		p.setColor(Color.BLUE);
-		p.setStrokeWidth(15f);
+		p.setStrokeWidth(17.5f);
 		p.setStyle(Paint.Style.STROKE);
 		
 		for(EdgeShape edge : game.getEdges()){
