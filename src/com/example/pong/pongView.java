@@ -1,16 +1,19 @@
 package com.example.pong;
 
 import org.jbox2d.collision.shapes.EdgeShape;
+import org.jbox2d.collision.shapes.PolygonShape;
+import org.jbox2d.common.Transform;
+import org.jbox2d.common.Vec2;
 import org.jbox2d.dynamics.Body;
+import org.jbox2d.dynamics.Fixture;
 
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.media.audiofx.BassBoost.Settings;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
-import android.view.SurfaceHolder;
-import android.view.SurfaceView;
 import android.view.View;
 
 public class pongView extends View{
@@ -106,6 +109,8 @@ int whichAction(MotionEvent me) { // 1=press, 0=release, 2=drag
 			 p.setColor(Color.RED);
 			
 			 //canvas.drawRect(10, 10, 15, 200, p);
+			 drawPaddle(list,canvas,p);
+			 p.setColor(Color.BLUE);
 			 canvas.drawCircle(toScreenX(list.getPosition().x),toScreenY(list.getPosition().y),15, p);
 		 }
 		 list=list.getNext();
@@ -131,6 +136,16 @@ int whichAction(MotionEvent me) { // 1=press, 0=release, 2=drag
 			screenHeight=c.getHeight();
 	}
 	void drawPaddle(Body paddle,Canvas c,Paint p){
-		c.drawCircle(toScreenX(paddle.getPosition().x),toScreenY(paddle.getPosition().y),10,p);
+			Fixture fixture=paddle.getFixtureList();
+	        PolygonShape poly = (PolygonShape) fixture.getShape();
+	        int vertexCount = poly.m_count;
+	        System.out.println("vertexCount: "+vertexCount);
+	        Vec2[] vertices = new Vec2[vertexCount];
+	        p.setColor(Color.RED);
+	        for (int i = 0; i < vertexCount; ++i) {
+	          c.drawCircle(toScreenX(poly.m_vertices[i].x),toScreenY(poly.m_vertices[i].y),10,p);;
+	        }
+		
+		//c.drawCircle(toScreenX(padd().x),toScreenY(paddle.getPosition().y),10,p);
 	}
 }
