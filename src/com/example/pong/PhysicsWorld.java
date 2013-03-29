@@ -66,7 +66,7 @@ public class PhysicsWorld {
 			BodyDef edgeDef=new BodyDef();
 			edgeDef.type=BodyType.STATIC;
 			EdgeShape edge=new EdgeShape();
-			edge.set(new Vec2(OFFSET,OFFSET),new Vec2(WIDTH-OFFSET,OFFSET));
+			edge.set(new Vec2(0,0),new Vec2(WIDTH,0));
 			edges.add(edge);
 			
 			Body edgeBody=getWorld().createBody(edgeDef);
@@ -75,7 +75,7 @@ public class PhysicsWorld {
 			BodyDef edgeDef1=new BodyDef();
 			edgeDef1.type=BodyType.STATIC;
 			EdgeShape edge1=new EdgeShape();
-			edge1.set(new Vec2(OFFSET, OFFSET),new Vec2(OFFSET,HEIGHT-OFFSET));
+			edge1.set(new Vec2(0,0),new Vec2(0,HEIGHT));
 			edges.add(edge1);
 			
 			Body edgeBody1=getWorld().createBody(edgeDef1);
@@ -84,7 +84,7 @@ public class PhysicsWorld {
 			BodyDef edgeDef2=new BodyDef();
 			edgeDef2.type=BodyType.STATIC;
 			EdgeShape edge2=new EdgeShape();
-			edge2.set(new Vec2(OFFSET, HEIGHT-OFFSET),new Vec2(WIDTH-OFFSET,HEIGHT-OFFSET));
+			edge2.set(new Vec2(0, HEIGHT),new Vec2(WIDTH,HEIGHT));
 			edges.add(edge2);
 			
 			Body edgeBody2=getWorld().createBody(edgeDef2);
@@ -94,7 +94,7 @@ public class PhysicsWorld {
 			edgeDef3.type=BodyType.STATIC;
 			EdgeShape edge3=new EdgeShape();
 		
-			edge3.set(new Vec2(WIDTH-OFFSET, HEIGHT-OFFSET),new Vec2(WIDTH-OFFSET,OFFSET));
+			edge3.set(new Vec2(WIDTH, HEIGHT),new Vec2(WIDTH,0));
 			edges.add(edge3);
 			
 			Body edgeBody3=getWorld().createBody(edgeDef3);
