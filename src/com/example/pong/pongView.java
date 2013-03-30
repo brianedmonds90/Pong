@@ -2,6 +2,7 @@ package com.example.pong;
 
 import org.jbox2d.collision.shapes.EdgeShape;
 import org.jbox2d.collision.shapes.PolygonShape;
+import org.jbox2d.common.Rot;
 import org.jbox2d.common.Transform;
 import org.jbox2d.common.Vec2;
 import org.jbox2d.dynamics.Body;
@@ -11,7 +12,6 @@ import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
-import android.media.audiofx.BassBoost.Settings;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
@@ -47,14 +47,16 @@ public class pongView extends View{
 	    }
 	    @Override
 	    public void onDraw(Canvas canvas) {
-
-	       canvas.save();
-	       p.setColor(Color.BLACK);
-	       setScreenWidth(canvas);setScreenHeight(canvas);
-	       drawGame(canvas, p);
-	       canvas.restore();
-	       super.onDraw(canvas);
-	       game.update();
+	    	game.update();
+	    	
+	    	super.onDraw(canvas);
+		    canvas.save();
+		    p.setColor(Color.BLACK);
+		    setScreenWidth(canvas);
+		    setScreenHeight(canvas);
+		    drawGame(canvas, p);
+		    canvas.restore();
+	       
 	       invalidate();
 	    }
 	 @Override
@@ -77,14 +79,16 @@ public class pongView extends View{
 		   
 	    return true;
 	 }
-int whichAction(MotionEvent me) { // 1=press, 0=release, 2=drag
-	  int action = me.getAction(); 
-	  int aaction = action & MotionEvent.ACTION_MASK;
-	  int what=0;
-	  if (aaction==MotionEvent.ACTION_POINTER_UP || aaction==MotionEvent.ACTION_UP) what=0;
-	  if (aaction==MotionEvent.ACTION_DOWN || aaction==MotionEvent.ACTION_POINTER_DOWN) what=1;
-	  if (aaction==MotionEvent.ACTION_MOVE) what=2;
-	  return what;
+	
+	 
+	int whichAction(MotionEvent me) { // 1=press, 0=release, 2=drag
+		  int action = me.getAction(); 
+		  int aaction = action & MotionEvent.ACTION_MASK;
+		  int what=0;
+		  if (aaction==MotionEvent.ACTION_POINTER_UP || aaction==MotionEvent.ACTION_UP) what=0;
+		  if (aaction==MotionEvent.ACTION_DOWN || aaction==MotionEvent.ACTION_POINTER_DOWN) what=1;
+		  if (aaction==MotionEvent.ACTION_MOVE) what=2;
+		  return what;
 	}  
 	int whichFinger(MotionEvent me) {
 	  int pointerIndex = (me.getAction() & MotionEvent.ACTION_POINTER_INDEX_MASK)>> MotionEvent.ACTION_POINTER_INDEX_SHIFT;
@@ -100,18 +104,58 @@ int whichAction(MotionEvent me) { // 1=press, 0=release, 2=drag
 	
 	//***Drawing Functions
 	void drawGame(Canvas canvas,Paint p){
+		
+		Vec2 v=new Vec2(200,300);
+		Vec2 v1=new Vec2(300,300);
+		Vec2 v2=v.rotate(v,30.0f,v1);
+		p.setColor(Color.BLACK);
+		
+		showVec2(v,canvas,p);
+		p.setColor(Color.BLUE);
+		showVec2(v1,canvas,p);
+		p.setColor(Color.RED);
+		showVec2(v2,canvas,p);
+//		
+//		p.setColor(Color.MAGENTA);
+//		a.show(canvas, p);
+//		p.setColor(Color.BLACK);
+//		b.show(canvas, p);
+//		
+//		pt aa=a.R(a,-30, b);
+//		p.setColor(Color.CYAN);
+//		aa.show(canvas, p);
+	
+		
+		//Draw the edges of the game surface
+//		ArrayList<EdgeShape> edges = game.getEdges();
+//		p.setColor(Color.BLUE);
+//		p.setStrokeWidth(17.5f);
+//		p.setStyle(Paint.Style.STROKE);
+		
+//		for(EdgeShape edge : game.getEdges()){
+//			Vec2 v1 = edge.m_vertex1;
+//			Vec2 v2 = edge.m_vertex2;
+//			canvas.drawLine(toScreenX(v1.x), toScreenY(v1.y), toScreenX(v2.x), toScreenY(v2.y), p);
+//		}
+		//End drawing edges
+		
 		Body list=game.getBodyList();
+		
+		p.setStyle(Paint.Style.FILL);
 		while(list!=null){
-		 if(list.m_userData=="circle"){
-			 canvas.drawCircle(toScreenX(list.getPosition().x),toScreenY(list.getPosition().y), 20, p);
+
+		 if(list.m_userData=="circle"){//draw the circles
+			 canvas.drawCircle(toScreenX(list.getPosition().x),toScreenY(list.getPosition().y),
+					 (int)(Math.sqrt((screenWidth*screenHeight)/800.0)), p);
 		 } 
-		 if(list.m_userData=="box"){
+		 if(list.m_userData=="box"){//Draw the boxes
 			 p.setColor(Color.RED);
-			
-			 //canvas.drawRect(10, 10, 15, 200, p);
 			 drawPaddle(list,canvas,p);
 			 p.setColor(Color.BLUE);
+			// System.out.println("Rotation of box: "+list.getTransform());
+			 
 			 canvas.drawCircle(toScreenX(list.getPosition().x),toScreenY(list.getPosition().y),15, p);
+
 		 }
 		 list=list.getNext();
 		}
@@ -120,7 +164,6 @@ int whichAction(MotionEvent me) { // 1=press, 0=release, 2=drag
 	  return (float) (x*(screenWidth/20.0));
 	}
 	private float toScreenY(float y) {
-		// TODO Auto-generated method stub
 		return (float) (y*(screenHeight/40.0));
 	}
 	float getScreenWidth(Canvas c){
@@ -130,22 +173,81 @@ int whichAction(MotionEvent me) { // 1=press, 0=release, 2=drag
 		return c.getHeight();
 	}
 	void setScreenWidth(Canvas c){
-			screenWidth= c.getWidth();
+		screenWidth= c.getWidth();
 	}
 	void setScreenHeight(Canvas c){
-			screenHeight=c.getHeight();
+		screenHeight=c.getHeight();
 	}
+	private Transform xf=new Transform();
 	void drawPaddle(Body paddle,Canvas c,Paint p){
 			Fixture fixture=paddle.getFixtureList();
 	        PolygonShape poly = (PolygonShape) fixture.getShape();
 	        int vertexCount = poly.m_count;
-	        System.out.println("vertexCount: "+vertexCount);
 	        Vec2[] vertices = new Vec2[vertexCount];
 	        p.setColor(Color.RED);
 	        for (int i = 0; i < vertexCount; ++i) {
-	          c.drawCircle(toScreenX(poly.m_vertices[i].x),toScreenY(poly.m_vertices[i].y),10,p);;
+	          vertices[i]=poly.m_vertices[i];
+	          
+	         //Transform.mulToOutUnsafe(xf, poly.m_vertices[i], vertices[i]);
+	        //  c.drawCircle(toScreenX(poly.m_vertices[i].x),toScreenY(poly.m_vertices[i].y),10,p);;
 	        }
-		
+	        //Transform t=paddle.getTransform();
+	        drawPolygon(vertices,vertexCount,paddle,c,p);
 		//c.drawCircle(toScreenX(padd().x),toScreenY(paddle.getPosition().y),10,p);
+	}
+	public void drawPolygon(Vec2[] vertices, int vertexCount,Body b, Canvas c, Paint p){
+		
+		if(vertexCount == 1){
+			drawSegment(vertices[0], vertices[0], b,c,p);
+			return;
+		}
+		
+		for(int i=0; i<vertexCount-1; i+=1){
+			drawSegment(vertices[i], vertices[i+1], b,c,p);
+		}
+		
+		if(vertexCount > 2){
+			drawSegment(vertices[vertexCount-1], vertices[0], b,c,p);
+		}
+	}
+	
+	//deprecated
+	public void drawBox(Body b,Canvas c,Paint p){
+		pt a=new pt(b.getPosition().x,b.getPosition().y);
+		Fixture fixture=b.getFixtureList();
+		
+		PolygonShape shape=(PolygonShape) fixture.getShape();
+		Transform t=b.getTransform();
+		p.setStrokeWidth(5);
+		p.setColor(Color.GREEN);
+		c.drawLine(toScreenX(a.x),toScreenY(a.y),toScreenX(t.p.x)+100, toScreenY(t.p.y)+100,p);
+		
+	}
+	
+	private float toScreen(float x){
+		return (float) (x*(screenWidth*screenHeight)/800.0);
+	}
+	private void drawSegment(Vec2 vec2, Vec2 vec22,Body body, Canvas c,Paint p) {
+		pt a,b;
+		Transform t=body.getTransform();
+		a=new pt(vec2.x,vec2.y);
+		b=new pt(vec22.x,vec22.y);
+		vec2=rotate(vec2, t.q, body);
+		vec22=rotate(vec22,t.q,body);
+		c.drawLine(toScreenX(vec2.x+t.p.x),toScreenY(vec2.y+t.p.y),
+				toScreenX(vec22.x+t.p.x),toScreenY(vec22.y+t.p.y),p);
+	}
+	private Vec2 rotate(Vec2 v,Rot r,Body b){
+		Vec2 vec=new Vec2();
+		vec=vec.rotate(v, r.getAngle(), b.getPosition());
+		return vec;
+	}
+	private Vec2 rotate(Vec2 v,Rot r,Vec2 b){
+		Vec2 vec=new Vec2();
+		vec=vec.rotate(v, r.getAngle(), b);
+		return vec;
+	}
+	public void showVec2(Vec2 v,Canvas c, Paint p){
+		c.drawCircle(v.x, v.y,10, p);
 	}
 }

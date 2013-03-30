@@ -25,6 +25,8 @@ package org.jbox2d.common;
 
 import java.io.Serializable;
 
+
+
 /**
  * A 2D column vector
  */
@@ -284,4 +286,9 @@ public class Vec2 implements Serializable {
     if (Float.floatToIntBits(y) != Float.floatToIntBits(other.y)) return false;
     return true;
   }
-}
+  public Vec2 rotate(Vec2 Q, float a, Vec2 C) {
+	  	float dx=Q.x-C.x, dy=Q.y-C.y,
+		c=MathUtils.cos(a), s=MathUtils.sin(a); 
+		return new Vec2(C.x+c*dx-s*dy, C.y+s*dx+c*dy); };  // Q rotated by angle a around point P
+	}
+ 

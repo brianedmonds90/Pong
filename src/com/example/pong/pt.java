@@ -1,7 +1,10 @@
 package com.example.pong;
 
+import org.jbox2d.common.MathUtils;
+import org.jbox2d.common.Transform;
+import org.jbox2d.common.Vec2;
+
 import android.graphics.Canvas;
-import android.graphics.Color;
 import android.graphics.Paint;
 
 class pt{
@@ -39,7 +42,14 @@ float x=0,y=0;
 //  pt add(vec V) {x += V.x; y += V.y; return this;}                              
 //  pt add(float s, vec V) {x += s*V.x; y += s*V.y; return this;}                 
                 
-    
+  pt R(pt Q, float a) {
+	  	float dx=Q.x, dy=Q.y,
+		  c=MathUtils.cos(a), s=MathUtils.sin(a); 
+  		return new pt(c*dx+s*dy,-s*dx+c*dy); };  // Q rotated by angle a around the origin
+  pt R(pt Q, float a, pt C) {
+	  	float dx=Q.x-C.x, dy=Q.y-C.y,
+		  c=MathUtils.cos(a), s=MathUtils.sin(a); 
+  		return P(C.x+c*dx-s*dy, C.y+s*dx+c*dy); };  // Q rotated by angle a around point P
   public String toString(){
    return x+", "+y+" "; 
   }
@@ -49,7 +59,14 @@ float x=0,y=0;
 	pt P(pt P, vec V) {
 		return P(P.x + V.x, P.y + V.y); 
 	}                                                 //  P+V (P transalted by vector V)
-	pt P(float x, float y) {return new pt(x,y); };                                                       // make point (x,y)
+	pt P(float x, float y) {return new pt(x,y); }; // make point (x,y)
+	pt toPt(Vec2 v){
+		return new pt(v.x,v.y);
+		
+	}
+	pt addTransform(Transform t){
+		return new pt(x+t.p.x,y+t.p.y);
+	}
 } // end of pt class
 
 	
