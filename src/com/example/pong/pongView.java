@@ -25,40 +25,50 @@ public class pongView extends View{
 	PhysicsWorld game;
 	EdgeShape e,e1,e2,e3;
 	float screenWidth,screenHeight;//Height and width in pixels
+	
+	Scoreboard scoreboard;
+	
 	public pongView(Context context, PhysicsWorld pWorld){
 		this(context);
 		this.pWorld = pWorld;
 	}
 	
-	 public pongView(Context context) {
+	public pongView(Context context) {
 	    	this(context, null, 0);	
-	    }  
-	    public pongView(Context context, AttributeSet attrs) {
-	        this(context, attrs, 0);
-	    }
-	    public pongView(Context context, AttributeSet attrs, int defStyle) {
-	        super(context, attrs, defStyle); 
-	        mController=new MultiTouchController();
-	        mController.init();
-	        p=new Paint();
-	        game=new PhysicsWorld();
-	        game.init();
-	        
-	    }
-	    @Override
-	    public void onDraw(Canvas canvas) {
-	    	game.update();
-	    	
-	    	super.onDraw(canvas);
-		    canvas.save();
-		    p.setColor(Color.BLACK);
-		    setScreenWidth(canvas);
-		    setScreenHeight(canvas);
-		    drawGame(canvas, p);
-		    canvas.restore();
-	       
-	       invalidate();
-	    }
+	}
+	
+	public pongView(Context context, AttributeSet attrs) {
+	    this(context, attrs, 0);
+	}
+	
+    public pongView(Context context, AttributeSet attrs, int defStyle) {
+        super(context, attrs, defStyle); 
+        mController=new MultiTouchController();
+        mController.init();
+        p=new Paint();
+        game=new PhysicsWorld();
+        game.init();
+        scoreboard = new Scoreboard(new pt(20,20));
+        game.setScoreboard(scoreboard);
+        
+    }
+    
+    @Override
+    public void onDraw(Canvas canvas) {
+    	game.update();
+    	super.onDraw(canvas);
+	    canvas.save();
+	    p.setColor(Color.BLACK);
+	    setScreenWidth(canvas);
+	    setScreenHeight(canvas);
+	    drawGame(canvas, p);
+	    
+	    
+	    
+	    scoreboard.draw(canvas,(float)getResources().getDimensionPixelSize(R.dimen.boardFontSize));
+	    canvas.restore();       
+	    invalidate();
+    }
 	 @Override
 	 public boolean onTouchEvent(MotionEvent me) {
 		int action= whichAction(me);
@@ -105,7 +115,7 @@ public class pongView extends View{
 	//***Drawing Functions
 	void drawGame(Canvas canvas,Paint p){
 		
-		
+		/**
 		//Draw the edges of the game surface
 		ArrayList<EdgeShape> edges = game.getEdges();
 		p.setColor(Color.BLUE);
@@ -118,7 +128,7 @@ public class pongView extends View{
 			canvas.drawLine(toScreenX(v1.x), toScreenY(v1.y), toScreenX(v2.x), toScreenY(v2.y), p);
 		}
 		//End drawing edges
-		
+		**/
 		Body list=game.getBodyList();
 		
 		p.setStyle(Paint.Style.FILL);
