@@ -2,6 +2,7 @@ package com.example.pong;
 
 import org.jbox2d.common.Vec2;
 import org.jbox2d.dynamics.Body;
+import org.jbox2d.dynamics.World;
 
 public class UIHelper {
 	private PhysicsWorld game;
@@ -51,6 +52,7 @@ public class UIHelper {
 			if(paddle.m_userData=="box"){
 				a.setTo(a.toPt(toScreenCoords(paddle.getPosition())));
 				m.disk.setTo(a);
+				
 				return;
 			}
 			paddle=paddle.getNext();
@@ -63,10 +65,38 @@ public class UIHelper {
 		while(paddle!=null){
 			if(paddle.m_userData=="box"){
 			   paddle.setLinearVelocity(toPhysicsCoords(velocity));
+			   //paddle.setAngularVelocity(0);
 			   return;
 			}
 			paddle=paddle.getNext();
 		}
+	}
+	public void userMove(pt mid){
+		Body paddle=game.getBodyList();
+		float d;
+		Vec2 direction;
+		Vec2 x= toPhysicsCoords(mid.toVec2());//The new position of the paddle at the future timestep
+		while(paddle!=null){
+			if(paddle.m_userData=="box"){
+			   d=dToPaddle(mid,paddle);//Distance between the current paddle and the timestep
+			   direction=x.sub(paddle.getPosition());
+			   direction.normalize();
+			   Vec2 linearV= direction.mul(d/game.timeStep);
+			 //  paddle.setAngularVelocity(paddle.getAngle()/game.timeStep);
+			   paddle.setLinearVelocity(linearV);
+			   game.update();
+			   paddle.setLinearVelocity(new Vec2(0,0));
+			   //paddle.setAngularVelocity(paddle.getAngle()/game.timeStep);
+			   return;
+			}
+			paddle=paddle.getNext();
+		}
+	}
+	private float dToPaddle(pt a,Body b){
+		pt posOfBody=a.toPt(b.getPosition());
+		a=a.toPt(toPhysicsCoords(a.toVec2()));
+		return a.d(posOfBody);
+		
 	}
 
 }

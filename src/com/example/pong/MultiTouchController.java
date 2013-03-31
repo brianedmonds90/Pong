@@ -28,7 +28,7 @@ class MultiTouchController{//Used to process the android API touch events for ea
   public void touch(MotionEvent ev, int pointerId){//Method used when a touch event happens
     pt cTouch= new pt(ev.getX(pointerId),ev.getY(pointerId));
     MultiTouch finger;
-   if(mTContainer.size()<4){
+   if(mTContainer.size()<2){
       finger=new MultiTouch(cTouch.x,cTouch.y);
       finger.selected=true;
       finger.meIndex=pointerId;
@@ -54,6 +54,7 @@ class MultiTouchController{//Used to process the android API touch events for ea
       if(temp.meIndex==pointerId){
           temp.selected=false;
           temp.meIndex=-1;
+          mTContainer.remove(i);
          // temp.history.clear();
       }
     }

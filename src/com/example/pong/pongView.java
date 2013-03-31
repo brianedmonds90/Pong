@@ -26,6 +26,8 @@ public class pongView extends View{
 	PhysicsWorld game;
 	EdgeShape e,e1,e2,e3;
 	vec v;
+	pt mid;
+	boolean runGame;
 	float screenWidth,screenHeight;//Height and width in pixels
 	UIHelper ui;
 	VelocityTracker vTracker;
@@ -44,11 +46,17 @@ public class pongView extends View{
 	    public pongView(Context context, AttributeSet attrs, int defStyle) {
 	        super(context, attrs, defStyle); 
 	        mController=new MultiTouchController();
-	        mController.init();
+	        //mController.init();
 	        p=new Paint();
 	        game=new PhysicsWorld();
 	        game.init();
 	        ui=new UIHelper(game,this,mController);
+	        mid=new pt();
+	        runGame=true;
+//	        while(runGame){
+//	        	//game.update();
+//	        	
+//	        }
 	    }
 	    @Override
 	    public void onDraw(Canvas canvas) {
@@ -60,15 +68,16 @@ public class pongView extends View{
 		    setScreenWidth(canvas);
 		    setScreenHeight(canvas);
 		    drawGame(canvas, p);
-//		    try{
-//		    	v.show(mController.getDiskAt(0), canvas, p);
-//		    }
-//		    catch(Exception e){
-//		    	e.printStackTrace();
-//		    }
-		    //mController.getMultiTouchAt(0).show(canvas);
 		    p.setColor(Color.RED);
-		  
+		    try{
+		  //  mController.show(canvas);
+		    canvas.drawLine(mController.getDiskAt(0).x,mController.getDiskAt(0).y
+		    		,mController.getDiskAt(1).x,mController.getDiskAt(1).y,p);
+		    mid.show(canvas, p);
+		    }
+		    catch(Exception e){
+		    	e.printStackTrace();
+		    }
 		    canvas.restore();
 	       
 	       invalidate();
@@ -79,24 +88,31 @@ public class pongView extends View{
 		vTracker=VelocityTracker.obtain();
 		    if (action==1) {
 		        mController.touch(me, whichFinger(me)); //Register the touch event
-		        //ui.userMove(mController.getMultiTouchAt(0));
+//		        if(mController.size()==2){
+//		        	mid=mid.P(mController.getDiskAt(0), mController.getDiskAt(1));
+//		        	ui.userMove(mid);
+//		        }
 		        v=velocity(me);
-		        invalidate();
-	          
+		        //invalidate();
 		    }
 		    else if (action==0) {
 		      mController.lift(whichFinger(me)); //Register the lift event
-		      v=velocity(me);
-		      invalidate();
+		      
+		     // v=velocity(me);
+		     // ui.userMove(v);
+		      //invalidate();
 		    }
 		    else if (action==2) {
 		      mController.motion(me);//Register the motion event
-		      v=velocity(me);
-		      
-		      //ui.userMove(mController.getMultiTouchAt(0));
-		      ui.userMove(v);
-		      
-		      invalidate();
+		      if(mController.size()==2){
+		        	mid=mid.P(mController.getDiskAt(0), mController.getDiskAt(1));
+		        	ui.userMove(mid);
+		        }
+		      else{
+		    	  v=velocity(me);
+		    	  ui.userMove(v);
+		      }
+		     // invalidate();
 		    }
 	    return true;
 	 }

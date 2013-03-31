@@ -15,7 +15,7 @@ import org.jbox2d.dynamics.World;
 
 public class PhysicsWorld {
 	private World m_world;
-	float timeStep;
+	public float timeStep;
 	int velocityIterations = 6;
 	
 	//Maintain a list of edges as they wont move
@@ -32,7 +32,7 @@ public class PhysicsWorld {
 		 timeStep= 1.0f / 60.0f;
 	}
 	void init(){
-	    for (int i = 1; i <3; i++) {
+	    for (int i = 1; i <2; i++) {
 		      PolygonShape polygonShape = new PolygonShape();
 		      polygonShape.setAsBox(5,.5f);
 		      
@@ -121,7 +121,6 @@ public class PhysicsWorld {
 		  return m_world.getBodyList();
 	  }
 	  public void update(){
-		  //m_world.setContinuousPhysics(true);
 		  m_world.step(timeStep, velocityIterations, positionIterations);
 	  } 
 	

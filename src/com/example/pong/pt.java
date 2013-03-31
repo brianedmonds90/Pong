@@ -70,6 +70,7 @@ float x=0,y=0;
 	pt addTransform(Transform t){
 		return new pt(x+t.p.x,y+t.p.y);
 	}
+	pt P(pt A, pt B) {return P((A.x+B.x)/2,(A.y+B.y)/2); }; 
 } // end of pt class
 
 	
