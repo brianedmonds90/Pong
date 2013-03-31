@@ -49,9 +49,6 @@ public class pongView extends View{
 	        game=new PhysicsWorld();
 	        game.init();
 	        ui=new UIHelper(game,this,mController);
-	        
-	        //ui.initPaddle(mController.getMultiTouchAt(0));
-	        
 	    }
 	    @Override
 	    public void onDraw(Canvas canvas) {
@@ -63,13 +60,13 @@ public class pongView extends View{
 		    setScreenWidth(canvas);
 		    setScreenHeight(canvas);
 		    drawGame(canvas, p);
-		    try{
-		    	v.show(mController.getDiskAt(0), canvas, p);
-		    }
-		    catch(Exception e){
-		    	e.printStackTrace();
-		    }
-		    mController.getMultiTouchAt(0).show(canvas);
+//		    try{
+//		    	v.show(mController.getDiskAt(0), canvas, p);
+//		    }
+//		    catch(Exception e){
+//		    	e.printStackTrace();
+//		    }
+		    //mController.getMultiTouchAt(0).show(canvas);
 		    p.setColor(Color.RED);
 		  
 		    canvas.restore();
@@ -82,7 +79,7 @@ public class pongView extends View{
 		vTracker=VelocityTracker.obtain();
 		    if (action==1) {
 		        mController.touch(me, whichFinger(me)); //Register the touch event
-		        ui.userMove(mController.getMultiTouchAt(0));
+		        //ui.userMove(mController.getMultiTouchAt(0));
 		        v=velocity(me);
 		        invalidate();
 	          
