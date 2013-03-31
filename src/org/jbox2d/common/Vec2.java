@@ -290,5 +290,8 @@ public class Vec2 implements Serializable {
 	  	float dx=Q.x-C.x, dy=Q.y-C.y,
 		c=MathUtils.cos(a), s=MathUtils.sin(a); 
 		return new Vec2(C.x+c*dx-s*dy, C.y+s*dx+c*dy); };  // Q rotated by angle a around point P
-	}
- 
+
+ public Vec2 translate(Vec2 w){//q translated by w
+	 return new Vec2(this.x+w.x,this.y+w.y);
+ }
+}

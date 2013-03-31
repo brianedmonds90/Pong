@@ -104,27 +104,17 @@ public class pongView extends View{
 	
 	//***Drawing Functions
 	void drawGame(Canvas canvas,Paint p){
-		
-		Vec2 v=new Vec2(200,300);
-		Vec2 v1=new Vec2(300,300);
-		Vec2 v2=v.rotate(v,30.0f,v1);
-		p.setColor(Color.BLACK);
-		
-		showVec2(v,canvas,p);
-		p.setColor(Color.BLUE);
-		showVec2(v1,canvas,p);
-		p.setColor(Color.RED);
-		showVec2(v2,canvas,p);
 //		
-//		p.setColor(Color.MAGENTA);
-//		a.show(canvas, p);
+//		Vec2 v=new Vec2(200,300);
+//		Vec2 v1=new Vec2(300,300);
+//		Vec2 v2=v.rotate(v,30.0f,v1);
 //		p.setColor(Color.BLACK);
-//		b.show(canvas, p);
 //		
-//		pt aa=a.R(a,-30, b);
-//		p.setColor(Color.CYAN);
-//		aa.show(canvas, p);
-	
+//		showVec2(v,canvas,p);
+//		p.setColor(Color.BLUE);
+//		showVec2(v1,canvas,p);
+//		p.setColor(Color.RED);
+//		showVec2(v2,canvas,p);
 		
 		//Draw the edges of the game surface
 //		ArrayList<EdgeShape> edges = game.getEdges();
@@ -151,11 +141,8 @@ public class pongView extends View{
 		 if(list.m_userData=="box"){//Draw the boxes
 			 p.setColor(Color.RED);
 			 drawPaddle(list,canvas,p);
-			 p.setColor(Color.BLUE);
-			// System.out.println("Rotation of box: "+list.getTransform());
-			 
+			 p.setColor(Color.BLUE);			 
 			 canvas.drawCircle(toScreenX(list.getPosition().x),toScreenY(list.getPosition().y),15, p);
-
 		 }
 		 list=list.getNext();
 		}
@@ -180,20 +167,19 @@ public class pongView extends View{
 	}
 	private Transform xf=new Transform();
 	void drawPaddle(Body paddle,Canvas c,Paint p){
-			Fixture fixture=paddle.getFixtureList();
-	        PolygonShape poly = (PolygonShape) fixture.getShape();
-	        int vertexCount = poly.m_count;
-	        Vec2[] vertices = new Vec2[vertexCount];
-	        p.setColor(Color.RED);
-	        for (int i = 0; i < vertexCount; ++i) {
-	          vertices[i]=poly.m_vertices[i];
-	          
-	         //Transform.mulToOutUnsafe(xf, poly.m_vertices[i], vertices[i]);
-	        //  c.drawCircle(toScreenX(poly.m_vertices[i].x),toScreenY(poly.m_vertices[i].y),10,p);;
-	        }
-	        //Transform t=paddle.getTransform();
-	        drawPolygon(vertices,vertexCount,paddle,c,p);
-		//c.drawCircle(toScreenX(padd().x),toScreenY(paddle.getPosition().y),10,p);
+		Fixture fixture=paddle.getFixtureList();
+	    PolygonShape poly = (PolygonShape) fixture.getShape();
+	    int vertexCount = poly.m_count;
+	    Vec2[] vertices = new Vec2[vertexCount];
+	    p.setColor(Color.RED);
+	    Transform t=paddle.getTransform();
+	    Vec2 vTemp;
+	    for (int i = 0; i < vertexCount; ++i) {
+	      vertices[i]=poly.m_vertices[i].translate(t.p);
+	      vTemp=vertices[i];
+	      vertices[i]=rotate(vTemp, t.q, paddle);
+	    }
+	    drawPolygon(vertices,vertexCount,paddle,c,p);
 	}
 	public void drawPolygon(Vec2[] vertices, int vertexCount,Body b, Canvas c, Paint p){
 		
@@ -228,14 +214,9 @@ public class pongView extends View{
 		return (float) (x*(screenWidth*screenHeight)/800.0);
 	}
 	private void drawSegment(Vec2 vec2, Vec2 vec22,Body body, Canvas c,Paint p) {
-		pt a,b;
 		Transform t=body.getTransform();
-		a=new pt(vec2.x,vec2.y);
-		b=new pt(vec22.x,vec22.y);
-		vec2=rotate(vec2, t.q, body);
-		vec22=rotate(vec22,t.q,body);
-		c.drawLine(toScreenX(vec2.x+t.p.x),toScreenY(vec2.y+t.p.y),
-				toScreenX(vec22.x+t.p.x),toScreenY(vec22.y+t.p.y),p);
+		c.drawLine(toScreenX(vec2.x),toScreenY(vec2.y),
+				toScreenX(vec22.x),toScreenY(vec22.y),p);
 	}
 	private Vec2 rotate(Vec2 v,Rot r,Body b){
 		Vec2 vec=new Vec2();
@@ -247,7 +228,11 @@ public class pongView extends View{
 		vec=vec.rotate(v, r.getAngle(), b);
 		return vec;
 	}
+	public void showVec2Screen(Vec2 v,Canvas c, Paint p){
+		c.drawCircle(toScreenX(v.x), toScreenY(v.y),10, p);
+	}
 	public void showVec2(Vec2 v,Canvas c, Paint p){
 		c.drawCircle(v.x, v.y,10, p);
 	}
+	
 }
