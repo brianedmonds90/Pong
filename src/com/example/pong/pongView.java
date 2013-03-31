@@ -14,6 +14,7 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
+import android.view.VelocityTracker;
 import android.view.View;
 
 public class pongView extends View{
@@ -24,7 +25,11 @@ public class pongView extends View{
 	PhysicsWorld pWorld;
 	PhysicsWorld game;
 	EdgeShape e,e1,e2,e3;
+	vec v;
 	float screenWidth,screenHeight;//Height and width in pixels
+	UIHelper ui;
+	VelocityTracker vTracker;
+	//MultiTouch m;
 	public pongView(Context context, PhysicsWorld pWorld){
 		this(context);
 		this.pWorld = pWorld;
@@ -43,6 +48,9 @@ public class pongView extends View{
 	        p=new Paint();
 	        game=new PhysicsWorld();
 	        game.init();
+	        ui=new UIHelper(game,this,mController);
+	        
+	        //ui.initPaddle(mController.getMultiTouchAt(0));
 	        
 	    }
 	    @Override
@@ -55,6 +63,15 @@ public class pongView extends View{
 		    setScreenWidth(canvas);
 		    setScreenHeight(canvas);
 		    drawGame(canvas, p);
+		    try{
+		    	v.show(mController.getDiskAt(0), canvas, p);
+		    }
+		    catch(Exception e){
+		    	e.printStackTrace();
+		    }
+		    mController.getMultiTouchAt(0).show(canvas);
+		    p.setColor(Color.RED);
+		  
 		    canvas.restore();
 	       
 	       invalidate();
@@ -62,25 +79,37 @@ public class pongView extends View{
 	 @Override
 	 public boolean onTouchEvent(MotionEvent me) {
 		int action= whichAction(me);
+		vTracker=VelocityTracker.obtain();
 		    if (action==1) {
 		        mController.touch(me, whichFinger(me)); //Register the touch event
+		        ui.userMove(mController.getMultiTouchAt(0));
+		        v=velocity(me);
 		        invalidate();
 	          
 		    }
 		    else if (action==0) {
 		      mController.lift(whichFinger(me)); //Register the lift event
+		      v=velocity(me);
 		      invalidate();
 		    }
 		    else if (action==2) {
 		      mController.motion(me);//Register the motion event
+		      v=velocity(me);
+		      
+		      //ui.userMove(mController.getMultiTouchAt(0));
+		      ui.userMove(v);
 		      
 		      invalidate();
 		    }
-		   
 	    return true;
 	 }
 	
-	 
+	vec velocity(MotionEvent me){
+		vTracker.obtain();
+		vTracker.addMovement(me);
+	    vTracker.computeCurrentVelocity(1000);
+	    return new vec(vTracker.getXVelocity(),vTracker.getYVelocity());
+	}
 	int whichAction(MotionEvent me) { // 1=press, 0=release, 2=drag
 		  int action = me.getAction(); 
 		  int aaction = action & MotionEvent.ACTION_MASK;
@@ -141,8 +170,7 @@ public class pongView extends View{
 		 if(list.m_userData=="box"){//Draw the boxes
 			 p.setColor(Color.RED);
 			 drawPaddle(list,canvas,p);
-			 p.setColor(Color.BLUE);			 
-			 canvas.drawCircle(toScreenX(list.getPosition().x),toScreenY(list.getPosition().y),15, p);
+			 
 		 }
 		 list=list.getNext();
 		}
@@ -165,7 +193,7 @@ public class pongView extends View{
 	void setScreenHeight(Canvas c){
 		screenHeight=c.getHeight();
 	}
-	private Transform xf=new Transform();
+	
 	void drawPaddle(Body paddle,Canvas c,Paint p){
 		Fixture fixture=paddle.getFixtureList();
 	    PolygonShape poly = (PolygonShape) fixture.getShape();

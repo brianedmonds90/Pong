@@ -1,5 +1,7 @@
 package com.example.pong;
 
+import org.jbox2d.common.Vec2;
+
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
@@ -21,5 +23,9 @@ class vec {
 	void show(pt a,Canvas c,Paint p){
 		p.setColor(Color.BLUE);
 		c.drawLine(a.x, a.y, this.x, this.y, p);
+	}
+	public Vec2 toVec2() {
+		// TODO Auto-generated method stub
+		return new Vec2(this.x,this.y);
 	}
 } // end vec class

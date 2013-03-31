@@ -29,8 +29,6 @@ public class PhysicsWorld {
 	public PhysicsWorld(){
 		
 		 m_world = new World(new Vec2(0,0));
-		 
-		 // getWorld().setGravity(new Vec2(0,0));
 		 timeStep= 1.0f / 60.0f;
 	}
 	void init(){
@@ -123,6 +121,7 @@ public class PhysicsWorld {
 		  return m_world.getBodyList();
 	  }
 	  public void update(){
+		  //m_world.setContinuousPhysics(true);
 		  m_world.step(timeStep, velocityIterations, positionIterations);
 	  } 
 	

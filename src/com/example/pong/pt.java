@@ -64,6 +64,9 @@ float x=0,y=0;
 		return new pt(v.x,v.y);
 		
 	}
+	Vec2 toVec2(){
+		return new Vec2(this.x,this.y);
+	}
 	pt addTransform(Transform t){
 		return new pt(x+t.p.x,y+t.p.y);
 	}

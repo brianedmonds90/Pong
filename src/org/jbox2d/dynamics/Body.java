@@ -35,6 +35,9 @@ import org.jbox2d.dynamics.contacts.Contact;
 import org.jbox2d.dynamics.contacts.ContactEdge;
 import org.jbox2d.dynamics.joints.JointEdge;
 
+import android.graphics.Canvas;
+import android.graphics.Paint;
+
 /**
  * A rigid body. These are created via World.createBody.
  * 
@@ -1178,5 +1181,8 @@ public class Body {
     // m_xf.position = m_sweep.c - Mul(m_xf.R, m_sweep.localCenter);
     Rot.mulToOutUnsafe(m_xf.q, m_sweep.localCenter, m_xf.p);
     m_xf.p.mulLocal(-1).addLocal(m_sweep.c);
+  }
+  public void drawCenter(Canvas c,Paint p){
+	  
   }
 }
