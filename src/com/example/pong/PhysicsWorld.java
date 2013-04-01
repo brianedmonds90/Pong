@@ -2,6 +2,9 @@ package com.example.pong;
 
 import java.util.ArrayList;
 
+import org.jbox2d.callbacks.ContactImpulse;
+import org.jbox2d.callbacks.ContactListener;
+import org.jbox2d.collision.Manifold;
 import org.jbox2d.collision.shapes.CircleShape;
 import org.jbox2d.collision.shapes.EdgeShape;
 import org.jbox2d.collision.shapes.PolygonShape;
@@ -9,15 +12,17 @@ import org.jbox2d.common.Vec2;
 import org.jbox2d.dynamics.Body;
 import org.jbox2d.dynamics.BodyDef;
 import org.jbox2d.dynamics.BodyType;
+import org.jbox2d.dynamics.Fixture;
 import org.jbox2d.dynamics.World;
+import org.jbox2d.dynamics.contacts.Contact;
 
 
 
-public class PhysicsWorld {
+public class PhysicsWorld implements ContactListener{
 	private World m_world;
 	public float timeStep;
 	int velocityIterations = 6;
-	
+	private Scoreboard scoreboard;
 	//Maintain a list of edges as they wont move
 	private ArrayList<EdgeShape> edges = new ArrayList<EdgeShape>();
 	int positionIterations = 2;
@@ -25,7 +30,9 @@ public class PhysicsWorld {
 	public static final float OFFSET = 0.15f;
 	public static final float WIDTH = 20.0f;//Dont change these, as they have to match the physics test bed
 	public static final float HEIGHT = 40.0f;
-	
+	private Fixture ball;
+	private Fixture p1Goal;
+	private Fixture p2Goal;
 	public PhysicsWorld(){
 		
 		 m_world = new World(new Vec2(0,0));
@@ -122,6 +129,43 @@ public class PhysicsWorld {
 	  }
 	  public void update(){
 		  m_world.step(timeStep, velocityIterations, positionIterations);
-	  } 
-	
+	  }
+	@Override
+	public void beginContact(Contact contact) {
+		System.out.println("CONTACT");
+		Contact c_list = contact;
+		//iterate through the LL
+		while(c_list != null){
+			//if the ball is colliding with a goal
+			if(c_list.getFixtureA() == ball){
+				if(c_list.getFixtureB() == p1Goal){
+					//player 2 has scored
+					scoreboard.incP2Score();
+				}
+				if(c_list.getFixtureB() == p2Goal){
+					//player 1 has scored
+					scoreboard.incP1Score();
+				}
+			}
+		}
+		
+	}
+	@Override
+	public void endContact(Contact contact) {
+		// TODO Auto-generated method stub
+		
+	}
+	@Override
+	public void preSolve(Contact contact, Manifold oldManifold) {
+		// TODO Auto-generated method stub
+		
+	}
+	@Override
+	public void postSolve(Contact contact, ContactImpulse impulse) {
+		// TODO Auto-generated method stub
+		
+	} 
+	public void setScoreboard(Scoreboard board){
+		this.scoreboard = board;
+	}
 }

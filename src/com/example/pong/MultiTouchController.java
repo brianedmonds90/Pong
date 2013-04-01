@@ -2,6 +2,8 @@ package com.example.pong;
 
 import java.util.ArrayList;
 
+import org.jbox2d.common.Vec2;
+
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.view.MotionEvent;
@@ -26,7 +28,7 @@ class MultiTouchController{//Used to process the android API touch events for ea
 
    }
   public void touch(MotionEvent ev, int pointerId){//Method used when a touch event happens
-    pt cTouch= new pt(ev.getX(pointerId),ev.getY(pointerId));
+    Vec2 cTouch= new Vec2(ev.getX(pointerId),ev.getY(pointerId));
     MultiTouch finger;
    if(mTContainer.size()<2){
       finger=new MultiTouch(cTouch.x,cTouch.y);
@@ -42,7 +44,7 @@ class MultiTouchController{//Used to process the android API touch events for ea
         temp.selected=true;
         temp.meIndex=pointerId;
         temp.lastTouch=cTouch; //Keep track of the touch location for movement
-        temp.history.add(new pt(temp.disk.x,temp.disk.y));
+        temp.history.add(new Vec2(temp.disk.x,temp.disk.y));
      }
     }
     
@@ -60,7 +62,7 @@ class MultiTouchController{//Used to process the android API touch events for ea
     }
   // smoothing=true; sfairInit(); fstp=0; 
   }
-  public MultiTouch findClosest(pt aa){//Returns the index of the closest disk of the container to the 
+  public MultiTouch findClosest(Vec2 aa){//Returns the index of the closest disk of the container to the 
     float minDistance= Float.MAX_VALUE;
     MultiTouch closest=null;
     for(MultiTouch mt: mTContainer){
@@ -81,11 +83,11 @@ class MultiTouchController{//Used to process the android API touch events for ea
         if(index!=-1 && mTContainer.get(index).selected){
           temp=mTContainer.get(index);
           //log the current position of the users fingers
-          temp.currentTouch= new pt(me.getX(i),me.getY(i));
+          temp.currentTouch= new Vec2(me.getX(i),me.getY(i));
           //calculate the distance moved from the previous frame and move the point
-          temp.disk.move(temp.currentTouch.subtract(temp.lastTouch));
+          temp.disk.move(temp.currentTouch.sub(temp.lastTouch));
           temp.lastTouch.set(temp.currentTouch);
-          temp.history.add(new pt(temp.disk.x,temp.disk.y));
+          temp.history.add(new Vec2(temp.disk.x,temp.disk.y));
         }
     }
   } 
@@ -111,13 +113,13 @@ class MultiTouchController{//Used to process the android API touch events for ea
     }
     return -1;
   } 
-  pt firstPt(){//Returns the first point of the MultiTouchController
+  Vec2 firstPt(){//Returns the first point of the MultiTouchController
     return mTContainer.get(0).disk; 
   }
   int size(){
      return this.mTContainer.size(); 
   }
-  pt getDiskAt(int index){
+  Vec2 getDiskAt(int index){
     return this.mTContainer.get(index).disk;
   }
   MultiTouch getAt(int index){
@@ -127,8 +129,8 @@ class MultiTouchController{//Used to process the android API touch events for ea
  MultiTouch getMultiTouchAt(int i){
   return mTContainer.get(i); 
  }
- float d(pt P, pt Q) {return (float) Math.sqrt(d2(P,Q));  };                                                       // ||AB|| (Distance)
- float d2(pt P, pt Q) {
+ float d(Vec2 P, Vec2 Q) {return (float) Math.sqrt(d2(P,Q));  };                                                       // ||AB|| (Distance)
+ float d2(Vec2 P, Vec2 Q) {
 	 return (float) (Math.pow((Q.x-P.x),2)+Math.pow((Q.y-P.y),2)); };                                             // AB*AB (Distance squared)
 	 
 	 void drawHistoryOf(int index,Canvas c,Paint p){

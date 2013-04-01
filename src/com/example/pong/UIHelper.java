@@ -20,7 +20,7 @@ public class UIHelper {
 		Body paddle=game.getBodyList();
 		while(paddle!=null){
 			if(paddle.m_userData=="box"){
-				paddle.setTransform(toPhysicsCoords(m.disk.toVec2()), paddle.getAngle());
+				paddle.setTransform(toPhysicsCoords(m.disk), paddle.getAngle());
 			//	paddle.setLinearVelocity(new Vec2(10,10));
 				return;
 			}
@@ -45,58 +45,44 @@ public class UIHelper {
 	private float toPhysicsY(float y){
 		return (float)((40.0*y)/pView.screenWidth);
 	}
-	public void initPaddle(MultiTouch m){
-		Body paddle=game.getBodyList();
-		a=new pt();
-		while(paddle!=null){
-			if(paddle.m_userData=="box"){
-				a.setTo(a.toPt(toScreenCoords(paddle.getPosition())));
-				m.disk.setTo(a);
-				
-				return;
-			}
-			paddle=paddle.getNext();
-		}
-	}
-	public void userMove(vec v) {
+	public void userMove(Vec2 v) {
 		// TODO Auto-generated method stub
-		Vec2 velocity=v.toVec2();
+	
 		Body paddle=game.getBodyList();
 		while(paddle!=null){
 			if(paddle.m_userData=="box"){
-			   paddle.setLinearVelocity(toPhysicsCoords(velocity));
+			   paddle.setLinearVelocity(toPhysicsCoords(v));
 			   //paddle.setAngularVelocity(0);
 			   return;
 			}
 			paddle=paddle.getNext();
 		}
 	}
-	public void userMove(pt mid){
+	public void userMove(Vec2 linear, Vec2 angular){
 		Body paddle=game.getBodyList();
-		float d;
-		Vec2 direction;
-		Vec2 x= toPhysicsCoords(mid.toVec2());//The new position of the paddle at the future timestep
 		while(paddle!=null){
 			if(paddle.m_userData=="box"){
-			   d=dToPaddle(mid,paddle);//Distance between the current paddle and the timestep
-			   direction=x.sub(paddle.getPosition());
-			   direction.normalize();
-			   Vec2 linearV= direction.mul(d/game.timeStep);
-			 //  paddle.setAngularVelocity(paddle.getAngle()/game.timeStep);
-			   paddle.setLinearVelocity(linearV);
-			   game.update();
-			   paddle.setLinearVelocity(new Vec2(0,0));
-			   //paddle.setAngularVelocity(paddle.getAngle()/game.timeStep);
+			   paddle.setLinearVelocity(toPhysicsCoords(linear));
+			   float angle=computeAngle(angular);
+			   paddle.setAngularVelocity(angle);
 			   return;
 			}
 			paddle=paddle.getNext();
 		}
 	}
-	private float dToPaddle(pt a,Body b){
-		pt posOfBody=a.toPt(b.getPosition());
-		a=a.toPt(toPhysicsCoords(a.toVec2()));
-		return a.d(posOfBody);
-		
+	private float computeAngle(Vec2 angular) {
+		// TODO Make this user interaction better
+		float angle;
+		if(angular.magnitude()<10)
+			angle=0;
+		else{
+			if(angular.y<0)
+				angle=15;
+			else 
+				angle=-15;
+		}
+		return angle;
 	}
+	
 
 }

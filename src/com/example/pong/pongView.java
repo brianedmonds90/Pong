@@ -20,14 +20,12 @@ import android.view.View;
 public class pongView extends View{
 	MultiTouchController mController;
 	Paint p;
-	Paddle a,b;
-	pt p1L,p1R,p2L,p2R;
 	PhysicsWorld pWorld;
 	PhysicsWorld game;
 	EdgeShape e,e1,e2,e3;
-	vec v;
-	pt mid;
+	Vec2 v,angular;
 	boolean runGame;
+	Scoreboard scoreboard;
 	float screenWidth,screenHeight;//Height and width in pixels
 	UIHelper ui;
 	VelocityTracker vTracker;
@@ -51,12 +49,9 @@ public class pongView extends View{
 	        game=new PhysicsWorld();
 	        game.init();
 	        ui=new UIHelper(game,this,mController);
-	        mid=new pt();
 	        runGame=true;
-//	        while(runGame){
-//	        	//game.update();
-//	        	
-//	        }
+	        scoreboard = new Scoreboard(new Vec2(20,20));
+	        game.setScoreboard(scoreboard);
 	    }
 	    @Override
 	    public void onDraw(Canvas canvas) {
@@ -64,16 +59,18 @@ public class pongView extends View{
 	    	
 	    	super.onDraw(canvas);
 		    canvas.save();
+		    scoreboard.draw(canvas,
+		    		(float)getResources().getDimensionPixelSize(R.dimen.boardFontSize));
 		    p.setColor(Color.BLACK);
 		    setScreenWidth(canvas);
 		    setScreenHeight(canvas);
 		    drawGame(canvas, p);
-		    p.setColor(Color.RED);
+		   // p.setColor(Color.RED);
 		    try{
-		  //  mController.show(canvas);
-		    canvas.drawLine(mController.getDiskAt(0).x,mController.getDiskAt(0).y
-		    		,mController.getDiskAt(1).x,mController.getDiskAt(1).y,p);
-		    mid.show(canvas, p);
+		    	mController.show(canvas);
+//		    canvas.drawLine(mController.getDiskAt(0).x,mController.getDiskAt(0).y
+//		    		,mController.getDiskAt(1).x,mController.getDiskAt(1).y,p);
+//		    mid.show(canvas, p);
 		    }
 		    catch(Exception e){
 		    	e.printStackTrace();
@@ -93,35 +90,41 @@ public class pongView extends View{
 //		        	ui.userMove(mid);
 //		        }
 		        v=velocity(me);
-		        //invalidate();
+		        invalidate();
 		    }
 		    else if (action==0) {
 		      mController.lift(whichFinger(me)); //Register the lift event
 		      
 		     // v=velocity(me);
 		     // ui.userMove(v);
-		      //invalidate();
+		      invalidate();
 		    }
 		    else if (action==2) {
 		      mController.motion(me);//Register the motion event
 		      if(mController.size()==2){
-		        	mid=mid.P(mController.getDiskAt(0), mController.getDiskAt(1));
-		        	ui.userMove(mid);
+		    	  v=velocity(me);
+		    	  angular =velocity(me,1);
+		    	  ui.userMove(v,angular);
 		        }
 		      else{
 		    	  v=velocity(me);
 		    	  ui.userMove(v);
 		      }
-		     // invalidate();
+		      invalidate();
 		    }
 	    return true;
 	 }
-	
-	vec velocity(MotionEvent me){
+	Vec2 velocity(MotionEvent me){
 		vTracker.obtain();
 		vTracker.addMovement(me);
 	    vTracker.computeCurrentVelocity(1000);
-	    return new vec(vTracker.getXVelocity(),vTracker.getYVelocity());
+	    return new Vec2(vTracker.getXVelocity(),vTracker.getYVelocity());
+	}
+	Vec2 velocity(MotionEvent me, int index){
+		vTracker.obtain();
+		vTracker.addMovement(me);
+	    vTracker.computeCurrentVelocity(1000);
+	    return new Vec2(vTracker.getXVelocity(1),vTracker.getYVelocity(1));
 	}
 	int whichAction(MotionEvent me) { // 1=press, 0=release, 2=drag
 		  int action = me.getAction(); 
@@ -238,18 +241,7 @@ public class pongView extends View{
 		}
 	}
 	
-	//deprecated
-	public void drawBox(Body b,Canvas c,Paint p){
-		pt a=new pt(b.getPosition().x,b.getPosition().y);
-		Fixture fixture=b.getFixtureList();
-		
-		PolygonShape shape=(PolygonShape) fixture.getShape();
-		Transform t=b.getTransform();
-		p.setStrokeWidth(5);
-		p.setColor(Color.GREEN);
-		c.drawLine(toScreenX(a.x),toScreenY(a.y),toScreenX(t.p.x)+100, toScreenY(t.p.y)+100,p);
-		
-	}
+
 	
 	private float toScreen(float x){
 		return (float) (x*(screenWidth*screenHeight)/800.0);
@@ -275,5 +267,6 @@ public class pongView extends View{
 	public void showVec2(Vec2 v,Canvas c, Paint p){
 		c.drawCircle(v.x, v.y,10, p);
 	}
+	
 	
 }

@@ -2,31 +2,33 @@ package com.example.pong;
 
 import java.util.ArrayList;
 
+import org.jbox2d.common.Vec2;
+
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 class MultiTouch{
-  pt currentTouch, lastTouch, disk;
+  Vec2 currentTouch, lastTouch, disk;
   boolean selected;
   int meIndex;
-  pt movement; 
-  ArrayList <pt>history;
+  Vec2 movement; 
+  ArrayList <Vec2>history;
   MultiTouch(){
-   currentTouch=new pt();
-   lastTouch= new pt();
-   disk=new pt();
+   currentTouch=new Vec2();
+   lastTouch= new Vec2();
+   disk=new Vec2();
    selected=false;
    meIndex=-1;
-   history=new ArrayList<pt>();
+   history=new ArrayList<Vec2>();
 
   }
   MultiTouch(float x,float y){
-   currentTouch=new pt();
-   lastTouch= new pt();
-   disk=new pt(x,y);
+   currentTouch=new Vec2();
+   lastTouch= new Vec2();
+   disk=new Vec2(x,y);
    selected=false;
    meIndex=-1;
-   history=new ArrayList<pt>();
+   history=new ArrayList<Vec2>();
 
   }
   void lift(){
@@ -56,8 +58,11 @@ class MultiTouch{
   }
   void drawHistory(Canvas c,Paint p){
 	  
-	  for(pt a: history){
+	  for(Vec2 a: history){
 		  c.drawCircle(a.x,a.y,15, p);
 	  }
+  }
+  Vec2 getHistoryAt(int index){
+	  return history.get(index);
   }
 }

@@ -37,12 +37,12 @@ public class Paddle {
 		p.setStrokeWidth(10);
 		canvas.drawLine(p1.x, p1.y, p1.x+length, p1.y+length, p);
 	}
-	void setToFingers(MultiTouch m,MultiTouch n){
-		p1.set(m.disk);
-		p2.set(n.disk);
-		//direction=paddleDirection();
-		ensureSize();
-	}
+//	void setToFingers(MultiTouch m,MultiTouch n){
+//		p1.set(m.disk);
+//		p2.set(n.disk);
+//		//direction=paddleDirection();
+//		ensureSize();
+//	}
 	private void ensureSize(){//keeps the size of the paddle constant
 		float d=p1.d(p2);
 		vec t1,t2;

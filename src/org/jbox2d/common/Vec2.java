@@ -27,6 +27,7 @@ import java.io.Serializable;
 
 
 
+
 /**
  * A 2D column vector
  */
@@ -72,7 +73,10 @@ public class Vec2 implements Serializable {
   public final Vec2 add(Vec2 v) {
     return new Vec2(x + v.x, y + v.y);
   }
-
+  public void move(Vec2 delta){
+	    this.x+=delta.x;
+	    this.y+=delta.y;
+	  }
 
 
   /** Return the difference of this vector and another; does not alter either one. */
@@ -294,4 +298,6 @@ public class Vec2 implements Serializable {
  public Vec2 translate(Vec2 w){//q translated by w
 	 return new Vec2(this.x+w.x,this.y+w.y);
  }
+ public float magnitude() {
+	 return (float) Math.sqrt((Math.pow(this.x,2)+Math.pow(this.y,2)));};                                                       // n(V): ||V|| (norm: length of V)
 }
