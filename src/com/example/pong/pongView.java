@@ -47,11 +47,13 @@ public class pongView extends View{
 	        //mController.init();
 	        p=new Paint();
 	        game=new PhysicsWorld();
+	        scoreboard = new Scoreboard(new Vec2(20,20));
+	        game.setScoreboard(scoreboard);
 	        game.init();
 	        ui=new UIHelper(game,this,mController);
 	        runGame=true;
-	        scoreboard = new Scoreboard(new Vec2(20,20));
-	        game.setScoreboard(scoreboard);
+	        
+	       
 	    }
 	    @Override
 	    public void onDraw(Canvas canvas) {
@@ -240,9 +242,6 @@ public class pongView extends View{
 			drawSegment(vertices[vertexCount-1], vertices[0], b,c,p);
 		}
 	}
-	
-
-	
 	private float toScreen(float x){
 		return (float) (x*(screenWidth*screenHeight)/800.0);
 	}
@@ -267,6 +266,4 @@ public class pongView extends View{
 	public void showVec2(Vec2 v,Canvas c, Paint p){
 		c.drawCircle(v.x, v.y,10, p);
 	}
-	
-	
 }
