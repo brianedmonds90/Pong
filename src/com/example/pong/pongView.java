@@ -25,6 +25,7 @@ public class pongView extends View{
 	EdgeShape e,e1,e2,e3;
 	Vec2 v,angular;
 	Vec2 lP,rP;
+	boolean moveL,moveR;
 	boolean runGame;
 	Scoreboard scoreboard;
 	float screenWidth,screenHeight;//Height and width in pixels
@@ -78,7 +79,13 @@ public class pongView extends View{
 		    try{
 		    	canvas.drawLine(toScreenX(lP.x),toScreenY(lP.y),
 		    			toScreenX(ui.forceLeft.x),toScreenY(ui.forceLeft.y),p);
-		     	canvas.drawLine(toScreenX(rP.x),toScreenY(rP.y),
+		    }
+		    catch(Exception e)
+		    {
+		    	e.printStackTrace();
+		    }
+		    try{
+		    	canvas.drawLine(toScreenX(rP.x),toScreenY(rP.y),
 		    			toScreenX(ui.forceRight.x),toScreenY(ui.forceRight.y),p);
 		    }
 		    catch(Exception e){
@@ -98,7 +105,20 @@ public class pongView extends View{
 	 public boolean onTouchEvent(MotionEvent me) {
 		int action= whichAction(me);
 		vTracker=VelocityTracker.obtain();
-		    if (action==1) {
+		if(mController.size()==1){
+			 Body paddle=ui.getPaddle();
+	    	  float distance=ui.getleftCoord(paddle).disTo(mController.getDiskAt(0));
+	    	  if(distance<ui.getRightCoord(paddle).disTo(mController.getDiskAt(0)))
+	    	  {
+	    		  moveL=true;
+	    		  moveR=false;
+	    	  }
+	    	  else{
+	    		  moveR=true;
+	    		  moveL=false;
+	    	  }
+		}
+		if (action==1) {
 		        mController.touch(me, whichFinger(me)); //Register the touch event
 //		        if(mController.size()==2){
 //		        	mid=mid.P(mController.getDiskAt(0), mController.getDiskAt(1));
@@ -109,7 +129,8 @@ public class pongView extends View{
 		    }
 		    else if (action==0) {
 		      mController.lift(whichFinger(me)); //Register the lift event
-		     
+		     moveL=false;
+		     moveR=false;
 		     // v=velocity(me);
 		     // ui.userMove(v);
 		      invalidate();
@@ -123,7 +144,16 @@ public class pongView extends View{
 		    	  ui.move(mController.getDiskAt(0),mController.getDiskAt(1));
 		        }
 		      else{
-		    	  ui.move(mController.getDiskAt(0));
+		    	  //Body paddle=ui.getPaddle();
+		    	  //float distance=ui.getleftCoord(paddle).disTo(mController.getDiskAt(0));
+		    	  if(moveL)
+		    	  {
+		    		  ui.moveL(mController.getDiskAt(0));
+		    	  }
+		    	  else{
+		    		  ui.moveR(mController.getDiskAt(0));
+		    	  }
+		    	  //ui.move(mController.getDiskAt(0));
 //		    	  v=velocity(me);
 //		    	  ui.userMove(v);
 		      }

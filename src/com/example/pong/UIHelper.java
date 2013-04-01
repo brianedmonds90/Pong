@@ -125,11 +125,7 @@ public class UIHelper {
 	public void playerWon(){
 		game.destroyBall();
 	}
-	private Vec2 rotate(Vec2 v,Rot r,Vec2 b){
-		Vec2 vec=new Vec2();
-		vec=vec.rotate(v, r.getAngle(), b);
-		return vec;
-	}
+
 	public Vec2 getleftCoord(Body paddle){//Gets the left coordinate of the paddle to apply a force to
 		Fixture fixture=paddle.getFixtureList();
 		
@@ -200,8 +196,29 @@ public class UIHelper {
 			b.applyLinearImpulse(dL.mul(ks), lPaddle);
 		}
 		b.m_linearDamping=3;
-		b.m_angularDamping=3;
-		
+		b.m_angularDamping=3;	
+	}
+	public void moveL(Vec2 f) {
+		Body b=getPaddle();
+		Vec2 finger=toPhysicsCoords(f);
+		Vec2 lPaddle= getleftCoord(b);
+		Vec2 dL=finger.sub(lPaddle);
+		forceLeft=dL.mul(ks);
+		forceRight=null;
+		b.applyLinearImpulse(dL.mul(ks), lPaddle);
+		b.m_linearDamping=3;
+		b.m_angularDamping=3;	
+	}
+	public void moveR(Vec2 f) {
+		Body b=getPaddle();
+		Vec2 finger=toPhysicsCoords(f);
+		Vec2 rPaddle= getRightCoord(b);
+		Vec2 dR=finger.sub(rPaddle);	
+		forceRight=dR.mul(ks);
+		forceLeft=null;
+		b.applyLinearImpulse(dR.mul(ks),rPaddle);
+		b.m_linearDamping=3;
+		b.m_angularDamping=3;	
 	}
 	public void move(Vec2 l,Vec2 r) {
 		Vec2 lFinger,rFinger;
@@ -222,9 +239,7 @@ public class UIHelper {
 		forceRight=dR.mul(ks);
 		b.applyLinearImpulse(dL.mul(ks), lPaddle);
 		b.applyLinearImpulse(dR.mul(ks),rPaddle);
-		//b.applyForce(dL.mul(ks),lPaddle);
 		b.m_linearDamping=3;
 		b.m_angularDamping=3;
-		//b.applyForce(dR.mul(ks),rPaddle);
 	}	
 }

@@ -11,8 +11,6 @@ import org.jbox2d.dynamics.BodyType;
 import org.jbox2d.dynamics.Fixture;
 import org.jbox2d.dynamics.World;
 
-
-
 public class PhysicsWorld{
 	private World m_world;
 	public float timeStep;
@@ -52,10 +50,8 @@ public class PhysicsWorld{
 		      
 		      Body body = getWorld().createBody(bodyDef);
 		      body.createFixture(polygonShape, 5.0f).m_restitution=(float) .75;
-		      
-		      //body.applyForce(new Vec2(-10000 * (i - 1), 0), new Vec2());
-		}
-			getWorld().setGravity(new Vec2(0,0));
+			}
+			getWorld().setGravity(new Vec2(0,9.8f));
 		    CircleShape circle = new CircleShape();
 		    circle.m_radius=1;
 		    BodyDef circleDef = new BodyDef();
