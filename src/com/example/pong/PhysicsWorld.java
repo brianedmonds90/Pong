@@ -1,20 +1,15 @@
 package com.example.pong;
 
-import java.util.ArrayList;
-
-import org.jbox2d.callbacks.ContactImpulse;
-import org.jbox2d.callbacks.ContactListener;
-import org.jbox2d.collision.Manifold;
 import org.jbox2d.collision.shapes.CircleShape;
 import org.jbox2d.collision.shapes.EdgeShape;
 import org.jbox2d.collision.shapes.PolygonShape;
+import org.jbox2d.common.Transform;
 import org.jbox2d.common.Vec2;
 import org.jbox2d.dynamics.Body;
 import org.jbox2d.dynamics.BodyDef;
 import org.jbox2d.dynamics.BodyType;
 import org.jbox2d.dynamics.Fixture;
 import org.jbox2d.dynamics.World;
-import org.jbox2d.dynamics.contacts.Contact;
 
 
 
@@ -54,8 +49,9 @@ public class PhysicsWorld{
 		      bodyDef.angle = (float) (Math.PI / 4 * i);
 		      bodyDef.allowSleep = false;
 		      bodyDef.userData="box";
+		      
 		      Body body = getWorld().createBody(bodyDef);
-		      body.createFixture(polygonShape, 5.0f);
+		      body.createFixture(polygonShape, 5.0f).m_restitution=(float) .75;
 		      
 		      //body.applyForce(new Vec2(-10000 * (i - 1), 0), new Vec2());
 		}
@@ -157,4 +153,5 @@ public class PhysicsWorld{
 			ball=ball.getNext();
 		}
 	}
+
 }

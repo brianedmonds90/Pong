@@ -1,8 +1,14 @@
 package com.example.pong;
 
+import org.jbox2d.collision.shapes.PolygonShape;
+import org.jbox2d.common.Rot;
+import org.jbox2d.common.Transform;
 import org.jbox2d.common.Vec2;
 import org.jbox2d.dynamics.Body;
-import org.jbox2d.dynamics.World;
+import org.jbox2d.dynamics.Fixture;
+
+import android.graphics.Canvas;
+import android.graphics.Paint;
 
 public class UIHelper {
 	private PhysicsWorld game;
@@ -10,12 +16,15 @@ public class UIHelper {
 	private MultiTouchController mC;
 	public pt a;
 	public Vec2 userVelocity;
+	Vec2 forceLeft,forceRight;
 	public Scoreboard scoreboard;
+	public float ks;
 	public UIHelper(PhysicsWorld myGame, pongView myView, MultiTouchController myController){
 		this.game=myGame;
 		this.pView=myView;
 		this.mC=myController;
 		userVelocity=new Vec2(0,0);
+		this.ks=20f;
 	}
 	public UIHelper(PhysicsWorld game2, pongView pongView,
 			MultiTouchController mController, Scoreboard scoreboard2) {
@@ -103,6 +112,8 @@ public class UIHelper {
 		}
 		return angle;
 	}
+
+	
 	public void setContactListener(){
 		game.getWorld().setContactListener(new MyContactListener(scoreboard));
 	}
@@ -114,4 +125,106 @@ public class UIHelper {
 	public void playerWon(){
 		game.destroyBall();
 	}
+	private Vec2 rotate(Vec2 v,Rot r,Vec2 b){
+		Vec2 vec=new Vec2();
+		vec=vec.rotate(v, r.getAngle(), b);
+		return vec;
+	}
+	public Vec2 getleftCoord(Body paddle){//Gets the left coordinate of the paddle to apply a force to
+		Fixture fixture=paddle.getFixtureList();
+		
+	    PolygonShape poly = (PolygonShape) fixture.getShape();
+	    int vertexCount = poly.m_count;
+	    Vec2[] vertices = new Vec2[vertexCount];
+		Transform t=paddle.getTransform();
+	    for (int i = 0; i < vertexCount; ++i) {
+		      vertices[i]=poly.m_vertices[i].translate(t.p);
+		      Vec2 vTemp=vertices[i];
+		      vertices[i]=pView.rotate(vTemp, t.q, paddle);
+		    }
+	    Vec2 a=vertices[0];
+	    Vec2 b=vertices[3];
+	    Vec2 ret=a.mid(b);
+		return ret;
+	}
+	public Vec2 getRightCoord(Body paddle){//Gets the left coordinate of the paddle to apply a force to
+		Fixture fixture=paddle.getFixtureList();
+		
+	    PolygonShape poly = (PolygonShape) fixture.getShape();
+	    int vertexCount = poly.m_count;
+	    Vec2[] vertices = new Vec2[vertexCount];
+		Transform t=paddle.getTransform();
+	    for (int i = 0; i < vertexCount; ++i) {
+		      vertices[i]=poly.m_vertices[i].translate(t.p);
+		      Vec2 vTemp=vertices[i];
+		      vertices[i]=pView.rotate(vTemp, t.q, paddle);
+		    }
+	    Vec2 a=vertices[1];
+	    Vec2 b=vertices[2];
+	    Vec2 ret=a.mid(b);
+		return ret;
+	}
+	public Body getPaddle(){
+		Body paddle=game.getBodyList();
+		while(paddle!=null){
+			if(paddle.m_userData=="box"){
+				return paddle;
+			}
+			paddle=paddle.getNext();
+		}
+		return null;
+	}
+	public void showPhysVec(Vec2 v, Canvas c, Paint p){//Converts a physics world vec2 to screen coords and draws it
+		Vec2 d= toScreenCoords(v);
+		c.drawCircle(d.x, d.y, 5, p);
+	}
+	public Vec2 toCOM(Vec2 v,Body b){//Calculates the distance from the center of mass to a vec2
+		return v.sub(b.getPosition());
+		 
+	}
+	public void move(Vec2 f) {
+		Body b=getPaddle();
+		Vec2 force;
+		Vec2 finger=toPhysicsCoords(f);
+		Vec2 lPaddle= getleftCoord(b);
+		Vec2 rPaddle= getRightCoord(b);
+		float distance=finger.disTo(lPaddle);
+		if(finger.disTo(rPaddle)<distance){
+			
+			Vec2 dR=finger.sub(rPaddle);
+			
+			b.applyLinearImpulse(dR.mul(ks),rPaddle);
+		}
+		else{
+			Vec2 dL=finger.sub(lPaddle);
+			b.applyLinearImpulse(dL.mul(ks), lPaddle);
+		}
+		b.m_linearDamping=3;
+		b.m_angularDamping=3;
+		
+	}
+	public void move(Vec2 l,Vec2 r) {
+		Vec2 lFinger,rFinger;
+		if(l.x<r.x){
+			lFinger=toPhysicsCoords(l);
+			rFinger=toPhysicsCoords(r);
+		}
+		else{
+			lFinger=toPhysicsCoords(r);
+			rFinger=toPhysicsCoords(l);
+		}
+		Body b=getPaddle();
+		Vec2 lPaddle= getleftCoord(b);
+		Vec2 rPaddle= getRightCoord(b);
+		Vec2 dL=lFinger.sub(lPaddle);
+		Vec2 dR=rFinger.sub(rPaddle);
+		forceLeft=dL.mul(ks);
+		forceRight=dR.mul(ks);
+		b.applyLinearImpulse(dL.mul(ks), lPaddle);
+		b.applyLinearImpulse(dR.mul(ks),rPaddle);
+		//b.applyForce(dL.mul(ks),lPaddle);
+		b.m_linearDamping=3;
+		b.m_angularDamping=3;
+		//b.applyForce(dR.mul(ks),rPaddle);
+	}	
 }

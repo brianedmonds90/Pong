@@ -28,6 +28,8 @@ import java.io.Serializable;
 
 
 
+
+
 /**
  * A 2D column vector
  */
@@ -300,4 +302,12 @@ public class Vec2 implements Serializable {
  }
  public float magnitude() {
 	 return (float) Math.sqrt((Math.pow(this.x,2)+Math.pow(this.y,2)));};                                                       // n(V): ||V|| (norm: length of V)
+	 public Vec2 mid(Vec2 B) {
+		 return new Vec2((this.x+B.x)/2,(this.y+B.y)/2); 
+	 }
+	 public float disTo(Vec2 v){
+		 Vec2 a= v.sub(this);
+		 return a.magnitude();
+	 }
 }
+

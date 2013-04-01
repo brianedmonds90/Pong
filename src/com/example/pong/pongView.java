@@ -24,6 +24,7 @@ public class pongView extends View{
 	PhysicsWorld game;
 	EdgeShape e,e1,e2,e3;
 	Vec2 v,angular;
+	Vec2 lP,rP;
 	boolean runGame;
 	Scoreboard scoreboard;
 	float screenWidth,screenHeight;//Height and width in pixels
@@ -53,6 +54,7 @@ public class pongView extends View{
 	        ui=new UIHelper(game,this,mController,scoreboard);
 	        ui.setContactListener();
 	        runGame=true;
+	        lP=new Vec2();
 	    }
 	    @Override
 	    public void onDraw(Canvas canvas) {
@@ -66,12 +68,24 @@ public class pongView extends View{
 		    setScreenWidth(canvas);
 		    setScreenHeight(canvas);
 		    drawGame(canvas, p);
-		   // p.setColor(Color.RED);
+		    Body paddle=ui.getPaddle();
+		    lP=ui.getleftCoord(paddle);
+		    rP=ui.getRightCoord(paddle);
+		    p.setColor(Color.RED);
+		    ui.showPhysVec(lP, canvas, p);
+		    p.setColor(Color.BLUE);
+		    ui.showPhysVec(rP,canvas,p);
+		    try{
+		    	canvas.drawLine(toScreenX(lP.x),toScreenY(lP.y),
+		    			toScreenX(ui.forceLeft.x),toScreenY(ui.forceLeft.y),p);
+		     	canvas.drawLine(toScreenX(rP.x),toScreenY(rP.y),
+		    			toScreenX(ui.forceRight.x),toScreenY(ui.forceRight.y),p);
+		    }
+		    catch(Exception e){
+		    	e.printStackTrace();
+		    }
 		    try{
 		    	mController.show(canvas);
-//		    canvas.drawLine(mController.getDiskAt(0).x,mController.getDiskAt(0).y
-//		    		,mController.getDiskAt(1).x,mController.getDiskAt(1).y,p);
-//		    mid.show(canvas, p);
 		    }
 		    catch(Exception e){
 		    	e.printStackTrace();
@@ -95,7 +109,7 @@ public class pongView extends View{
 		    }
 		    else if (action==0) {
 		      mController.lift(whichFinger(me)); //Register the lift event
-		      
+		     
 		     // v=velocity(me);
 		     // ui.userMove(v);
 		      invalidate();
@@ -103,14 +117,15 @@ public class pongView extends View{
 		    else if (action==2) {
 		      mController.motion(me);//Register the motion event
 		      if(mController.size()==2){
-		    	  v=velocity(me);
-		    	  angular =velocity(me,1);
-		    	  ui.userMove(v,angular);
+//		    	  v=velocity(me);
+//		    	  angular =velocity(me,1);
+//		    	  ui.userMove(v,angular);
+		    	  ui.move(mController.getDiskAt(0),mController.getDiskAt(1));
 		        }
 		      else{
-		    	  
-		    	  v=velocity(me);
-		    	  ui.userMove(v);
+		    	  ui.move(mController.getDiskAt(0));
+//		    	  v=velocity(me);
+//		    	  ui.userMove(v);
 		      }
 		      invalidate();
 		    }
@@ -250,7 +265,7 @@ public class pongView extends View{
 		c.drawLine(toScreenX(vec2.x),toScreenY(vec2.y),
 				toScreenX(vec22.x),toScreenY(vec22.y),p);
 	}
-	private Vec2 rotate(Vec2 v,Rot r,Body b){
+	public Vec2 rotate(Vec2 v,Rot r,Body b){
 		Vec2 vec=new Vec2();
 		vec=vec.rotate(v, r.getAngle(), b.getPosition());
 		return vec;
