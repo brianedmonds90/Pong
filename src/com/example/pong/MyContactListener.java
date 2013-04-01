@@ -8,12 +8,17 @@ import org.jbox2d.dynamics.contacts.Contact;
 public class MyContactListener implements ContactListener{
 
 	public Scoreboard scoreboard;
+	public UIHelper helper;
 	
 	MyContactListener(){
 		
 	}
 	MyContactListener(Scoreboard score){
 		scoreboard=score;
+	}
+	MyContactListener(Scoreboard score,UIHelper myHelper){
+		scoreboard=score;
+		helper=myHelper;
 	}
 	@Override
 	public void beginContact(Contact contact) {
@@ -27,11 +32,20 @@ public class MyContactListener implements ContactListener{
 			if(userDataA=="goal 1"&&userDataB=="circle"){
 					//player 2 has scored
 				scoreboard.incP2Score();
+				if(scoreboard.isP2Win()){
+					
+					//helper.playerWon();
+					
+					//helper.serveBall(2);
+					//do something
+				}
 			}
 			else if(userDataA=="goal 2"&&userDataB=="circle"){
 				//player 2 has scored
 				scoreboard.incP1Score();
-			
+				if(scoreboard.isP1Win()){
+					//do something
+				}
 			}
 			else if(userDataB=="goal 1"&&userDataA=="circle"){
 				scoreboard.incP2Score();

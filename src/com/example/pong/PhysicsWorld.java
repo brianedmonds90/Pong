@@ -24,7 +24,6 @@ public class PhysicsWorld{
 	int velocityIterations = 6;
 	private Scoreboard scoreboard;
 	//Maintain a list of edges as they wont move
-	private ArrayList<EdgeShape> edges = new ArrayList<EdgeShape>();
 	int positionIterations = 2;
 	MyContactListener listener;
 	public static final float OFFSET = 0.15f;
@@ -34,10 +33,8 @@ public class PhysicsWorld{
 	private Fixture p1Goal;
 	private Fixture p2Goal;
 	public PhysicsWorld(){
-		
 		 m_world = new World(new Vec2(0,0));
 		 timeStep= 1.0f / 60.0f;
-		
 	}
 	public PhysicsWorld(Scoreboard myScore){
 		
@@ -73,8 +70,7 @@ public class PhysicsWorld{
 		    circleDef.userData="circle";
 		    Body circleBody = getWorld().createBody(circleDef);
 		    circleBody.createFixture(circle, 5.0f);
-		    
-		    
+		   
 		    //GAME SURFACE EDGES
 			BodyDef edgeDef=new BodyDef();
 			edgeDef.userData="goal 1";
@@ -82,27 +78,22 @@ public class PhysicsWorld{
 			EdgeShape edge=new EdgeShape();
 			edge.set(new Vec2(0,0),new Vec2(WIDTH,0));
 			
-			edges.add(edge);
-			
 			Body edgeBody=getWorld().createBody(edgeDef);
 			edgeBody.createFixture(edge, 0).m_restitution=1;
-			
 			BodyDef edgeDef1=new BodyDef();
-		
 			edgeDef1.type=BodyType.STATIC;
 			EdgeShape edge1=new EdgeShape();
 			edge1.set(new Vec2(0,0),new Vec2(0,HEIGHT));
-			edges.add(edge1);
+		
 			
 			Body edgeBody1=getWorld().createBody(edgeDef1);
 			edgeBody1.createFixture(edge1, 0).m_restitution=1;
-			
 			BodyDef edgeDef2=new BodyDef();
 			edgeDef2.userData="goal 2";
 			edgeDef2.type=BodyType.STATIC;
 			EdgeShape edge2=new EdgeShape();
 			edge2.set(new Vec2(0, HEIGHT),new Vec2(WIDTH,HEIGHT));
-			edges.add(edge2);
+		
 			
 			Body edgeBody2=getWorld().createBody(edgeDef2);
 			edgeBody2.createFixture(edge2, 0).m_restitution=1;
@@ -112,24 +103,12 @@ public class PhysicsWorld{
 			EdgeShape edge3=new EdgeShape();
 		
 			edge3.set(new Vec2(WIDTH, HEIGHT),new Vec2(WIDTH,0));
-			edges.add(edge3);
 			
 			Body edgeBody3=getWorld().createBody(edgeDef3);
-			
 			edgeBody3.createFixture(edge3, 0).m_restitution=1;
 			
-			 m_world.setContactListener(new MyContactListener(scoreboard));
 			//END GAME SURFACE EDGES
 	}
-	
-	public ArrayList<EdgeShape> getEdges(){
-		return this.edges;
-	}
-	
-	public EdgeShape getEdge(int i){
-		return edges.get(i);
-	}
-	
 	/**
 	   * Gets the current world
 	   * 
@@ -146,5 +125,36 @@ public class PhysicsWorld{
 	 }
 	public void setScoreboard(Scoreboard board){
 		this.scoreboard = board;
+	}
+	public void destroyBall(){
+		Body ball= getBodyList();
+		while(ball!=null){
+			if(ball.m_userData=="circle")
+				m_world.destroyBody(ball);
+			ball=ball.getNext();
+		}
+	}
+	public void serveBall(Vec2 velocity){
+	    CircleShape circle = new CircleShape();
+	    circle.m_radius=1;
+	    BodyDef circleDef = new BodyDef();
+	    circleDef.type = BodyType.DYNAMIC;
+	    circleDef.position.set(10, 10);
+	    circleDef.linearVelocity=velocity;
+	    circleDef.allowSleep = false;
+	    circleDef.userData="circle";
+	    Body circleBody = getWorld().createBody(circleDef);
+	    circleBody.createFixture(circle, 5.0f);
+	}
+	public void centerBall(){
+		Body ball= getBodyList();
+		while(ball!=null){
+			if(ball.m_userData=="circle"){
+				ball.setTransform(new Vec2(20,40), 0);
+				ball.setLinearVelocity(new Vec2(0,0));
+				return;
+			}
+			ball=ball.getNext();
+		}
 	}
 }

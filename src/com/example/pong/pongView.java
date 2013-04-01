@@ -47,13 +47,12 @@ public class pongView extends View{
 	        //mController.init();
 	        p=new Paint();
 	        game=new PhysicsWorld();
-	        scoreboard = new Scoreboard(new Vec2(20,20),0,0,10);
+	        scoreboard = new Scoreboard(new Vec2(20,20),0,0,3);
 	        game.setScoreboard(scoreboard);
 	        game.init();
-	        ui=new UIHelper(game,this,mController);
+	        ui=new UIHelper(game,this,mController,scoreboard);
+	        ui.setContactListener();
 	        runGame=true;
-	        
-	       
 	    }
 	    @Override
 	    public void onDraw(Canvas canvas) {
@@ -109,6 +108,7 @@ public class pongView extends View{
 		    	  ui.userMove(v,angular);
 		        }
 		      else{
+		    	  
 		    	  v=velocity(me);
 		    	  ui.userMove(v);
 		      }

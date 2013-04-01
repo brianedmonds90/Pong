@@ -10,11 +10,17 @@ public class UIHelper {
 	private MultiTouchController mC;
 	public pt a;
 	public Vec2 userVelocity;
+	public Scoreboard scoreboard;
 	public UIHelper(PhysicsWorld myGame, pongView myView, MultiTouchController myController){
 		this.game=myGame;
 		this.pView=myView;
 		this.mC=myController;
 		userVelocity=new Vec2(0,0);
+	}
+	public UIHelper(PhysicsWorld game2, pongView pongView,
+			MultiTouchController mController, Scoreboard scoreboard2) {
+			this(game2,pongView,mController);
+			scoreboard=scoreboard2;
 	}
 	public void userMove(MultiTouch m){
 		Body paddle=game.getBodyList();
@@ -49,10 +55,24 @@ public class UIHelper {
 		// TODO Auto-generated method stub
 	
 		Body paddle=game.getBodyList();
+		
 		while(paddle!=null){
 			if(paddle.m_userData=="box"){
 			   paddle.setLinearVelocity(toPhysicsCoords(v));
 			   //paddle.setAngularVelocity(0);
+			   return;
+			}
+			paddle=paddle.getNext();
+		}
+	}
+	public void userForce(Vec2 v) {
+		// TODO Auto-generated method stub
+	
+		Body paddle=game.getBodyList();
+	
+		while(paddle!=null){
+			if(paddle.m_userData=="box"){
+				//paddle.applyForce(force, point);
 			   return;
 			}
 			paddle=paddle.getNext();
@@ -83,6 +103,15 @@ public class UIHelper {
 		}
 		return angle;
 	}
-	
-
+	public void setContactListener(){
+		game.getWorld().setContactListener(new MyContactListener(scoreboard));
+	}
+	public void serveBall(int player){//called after score to serve the ball to the player that just scored
+		if(player==2){//serve the ball to player 1
+			game.serveBall(new Vec2(10,0));
+		}
+	}
+	public void playerWon(){
+		game.destroyBall();
+	}
 }
