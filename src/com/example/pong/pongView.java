@@ -69,6 +69,8 @@ public class pongView extends View{
 		    setScreenWidth(canvas);
 		    setScreenHeight(canvas);
 		    drawGame(canvas, p);
+		    
+		    //TODO these need to be refactored into a single draw
 		    Body paddle=ui.getPaddle();
 		    lP=ui.getleftCoord(paddle);
 		    rP=ui.getRightCoord(paddle);
@@ -235,6 +237,10 @@ public class pongView extends View{
 			 drawPaddle(list,canvas,p);
 			 
 		 }
+		 if(list.m_userData=="block"){
+			p.setColor(Color.MAGENTA);
+			drawBlock(list,canvas,p);
+		 }
 		 list=list.getNext();
 		}
 	}
@@ -255,6 +261,23 @@ public class pongView extends View{
 	}
 	void setScreenHeight(Canvas c){
 		screenHeight=c.getHeight();
+	}
+	
+	void drawBlock(Body block, Canvas c, Paint p){
+		Fixture fixture = block.getFixtureList();
+		PolygonShape polygon = (PolygonShape)fixture.getShape();
+		
+		int v_count = polygon.m_count;
+		//this holds the vertices in world space
+		Vec2[] vertices = new Vec2[v_count];
+		Transform t=block.getTransform();
+		Vec2 temp;
+		for(int i=0; i<v_count; i++){
+			vertices[i]=polygon.m_vertices[i].translate(t.p);
+			temp = vertices[i];
+			vertices[i]=rotate(temp,t.q,block);
+		}
+		drawFilledBlock(vertices,c,p);
 	}
 	
 	void drawPaddle(Body paddle,Canvas c,Paint p){
@@ -287,6 +310,16 @@ public class pongView extends View{
 			drawSegment(vertices[vertexCount-1], vertices[0], b,c,p);
 		}
 	}
+	
+	public void drawFilledBlock(Vec2[] vertices, Canvas c, Paint p){
+		//vertex order for block
+		// 0 ---- 1
+		// 3 ---- 2
+		p.setStyle(Paint.Style.FILL);
+		c.drawRect(toScreenX(vertices[0].x),toScreenY(vertices[0].y)
+				,toScreenX(vertices[2].x),toScreenY(vertices[2].y), p);
+	}
+	
 	private float toScreen(float x){
 		return (float) (x*(screenWidth*screenHeight)/800.0);
 	}
