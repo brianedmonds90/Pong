@@ -242,8 +242,4 @@ public class UIHelper {
 		b.m_linearDamping=3;
 		b.m_angularDamping=3;
 	}
-	
-	public void update(){
-		
-	}
 }

@@ -60,7 +60,7 @@ public class PhysicsWorld{
 	    BodyDef block_def = new BodyDef();
 	    block_def.type = BodyType.KINEMATIC;
 	    block_def.position.set(4,2);
-	    block_def.linearVelocity.set(new Vec2(2,0));
+	    block_def.linearVelocity.set(new Vec2(4,0));
 	    block_def.allowSleep = false;
 	    block_def.userData="block";
 	    Body block = getWorld().createBody(block_def);
@@ -130,7 +130,32 @@ public class PhysicsWorld{
 	  }
 	  public void update(){
 		  m_world.step(timeStep, velocityIterations, positionIterations);
-	 }
+		  checkBlocks();
+		  
+	  }
+	  
+	  public void checkBlocks(){
+		  Body block = m_world.getBodyList();
+		  while(block != null){
+			  if(block.m_userData=="block"){
+				  checkBlockCollision(block);
+			  }
+			  block=block.getNext();
+		  }
+	  }
+	  //Needed as blocks are kinematic
+	  public void checkBlockCollision(Body block){
+		  PolygonShape polygon = (PolygonShape)block.getFixtureList().getShape();
+		  
+		  Transform t = block.getTransform();
+		  Vec2 v0Trans = polygon.m_vertices[0].translate(t.p);
+		  Vec2 v1Trans = polygon.m_vertices[1].translate(t.p);
+		  if(v0Trans.x < 0 || v1Trans.x  > WIDTH){
+			  block.setLinearVelocity(block.getLinearVelocity().negate());
+		  }
+	  }
+	  
+	  
 	  public void setScoreboard(Scoreboard board){
 		this.scoreboard = board;
 	  }
