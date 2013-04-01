@@ -10,7 +10,7 @@ public class Scoreboard {
 
 	private int p1Score;
 	private int p2Score;
-
+	public int maxScore;
 	//center of the scoreboard
 	private Vec2 loc;
 
@@ -27,7 +27,11 @@ public class Scoreboard {
 		this.p1Score = p1Score;
 		this.p2Score = p2Score;
 	}
-
+	public Scoreboard(Vec2 loc, int p1Score, int p2Score, int myMaxScore){
+		this(loc,p1Score,p2Score);
+		this.maxScore=myMaxScore;
+	}
+	
 
 	/** Getters and Setters **/
 	public int getP1Score(){
@@ -55,12 +59,13 @@ public class Scoreboard {
 	/** Game Logic Methods **/
 	public void incP1Score(){
 		p1Score++;
+		
 	}
 	public void incP2Score(){
 		p2Score++;
 	}
 
-	public boolean isP1Win(int maxScore){
+	public boolean isP1Win(){
 		if(p1Score >= maxScore){
 			return true;
 		}
@@ -68,7 +73,7 @@ public class Scoreboard {
 			return false;
 	}
 
-	public boolean isP2Win(int maxScore){
+	public boolean isP2Win(){
 		if(p2Score >= maxScore){
 			return true;
 		}

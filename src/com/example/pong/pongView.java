@@ -47,7 +47,7 @@ public class pongView extends View{
 	        //mController.init();
 	        p=new Paint();
 	        game=new PhysicsWorld();
-	        scoreboard = new Scoreboard(new Vec2(20,20));
+	        scoreboard = new Scoreboard(new Vec2(20,20),0,0,10);
 	        game.setScoreboard(scoreboard);
 	        game.init();
 	        ui=new UIHelper(game,this,mController);

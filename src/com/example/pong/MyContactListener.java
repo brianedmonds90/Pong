@@ -3,7 +3,6 @@ package com.example.pong;
 import org.jbox2d.callbacks.ContactImpulse;
 import org.jbox2d.callbacks.ContactListener;
 import org.jbox2d.collision.Manifold;
-import org.jbox2d.dynamics.Fixture;
 import org.jbox2d.dynamics.contacts.Contact;
 
 public class MyContactListener implements ContactListener{
@@ -27,16 +26,19 @@ public class MyContactListener implements ContactListener{
 			//if the ball is colliding with a goal
 			if(userDataA=="goal 1"&&userDataB=="circle"){
 					//player 2 has scored
-					scoreboard.incP2Score();
-				
+				scoreboard.incP2Score();
 			}
 			else if(userDataA=="goal 2"&&userDataB=="circle"){
-				
 				//player 2 has scored
 				scoreboard.incP1Score();
 			
 			}
-
+			else if(userDataB=="goal 1"&&userDataA=="circle"){
+				scoreboard.incP2Score();
+			}
+			else if(userDataB=="goal 2"&&userDataA=="circle"){
+				scoreboard.incP1Score();
+			}
 			c_list=c_list.m_next;
 		}
 	}
