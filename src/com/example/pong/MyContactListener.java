@@ -58,7 +58,17 @@ public class MyContactListener implements ContactListener{
 	}
 	@Override
 	public void endContact(Contact contact) {
-		// TODO Auto-generated method stub
+		Contact c_list = contact;
+		
+		while(c_list != null){
+			String userDataA=(String) c_list.getFixtureA().m_body.m_userData;
+			String userDataB=(String) c_list.getFixtureB().m_body.m_userData;
+			//if the block and ball are colliding
+			if(userDataA == "block" && userDataB =="circle"){
+				c_list.getFixtureA().m_body.m_userData = PhysicsWorld.DESTROY;
+			}
+			c_list = c_list.getNext();
+		}
 		
 	}
 

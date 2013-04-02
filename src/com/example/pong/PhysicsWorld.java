@@ -1,5 +1,6 @@
 package com.example.pong;
 
+import java.util.Random;
 import org.jbox2d.collision.shapes.CircleShape;
 import org.jbox2d.collision.shapes.EdgeShape;
 import org.jbox2d.collision.shapes.PolygonShape;
@@ -11,7 +12,12 @@ import org.jbox2d.dynamics.BodyType;
 import org.jbox2d.dynamics.Fixture;
 import org.jbox2d.dynamics.World;
 
+import android.util.Log;
+
 public class PhysicsWorld{
+	
+	public static final String DESTROY = "dest";
+	
 	private World m_world;
 	public float timeStep;
 	int velocityIterations = 6;
@@ -25,12 +31,14 @@ public class PhysicsWorld{
 	private Fixture ball;
 	private Fixture p1Goal;
 	private Fixture p2Goal;
+	private Random random;
 	public PhysicsWorld(){
+		this.random = new Random();
 		 m_world = new World(new Vec2(0,0));
 		 timeStep= 1.0f / 60.0f;
 	}
 	public PhysicsWorld(Scoreboard myScore){
-		
+		this.random = new Random();
 		 m_world = new World(new Vec2(0,0));
 		 timeStep= 1.0f / 60.0f;
 		 scoreboard=myScore;
@@ -45,7 +53,7 @@ public class PhysicsWorld{
 		      
 		      BodyDef bodyDef = new BodyDef();
 		      bodyDef.type = BodyType.DYNAMIC;
-		      bodyDef.position.set(i+10, 10);
+		      bodyDef.position.set(i+10, 25);
 		      bodyDef.angle = (float) (Math.PI / 4 * i);
 		      bodyDef.allowSleep = false;
 		      bodyDef.userData="box";
@@ -55,16 +63,7 @@ public class PhysicsWorld{
 		}
 	    
 	    //BLOCKING BOX
-	    PolygonShape block_shape = new PolygonShape();
-	    block_shape.setAsBox(2, 1);
-	    BodyDef block_def = new BodyDef();
-	    block_def.type = BodyType.KINEMATIC;
-	    block_def.position.set(4,2);
-	    block_def.linearVelocity.set(new Vec2(4,0));
-	    block_def.allowSleep = false;
-	    block_def.userData="block";
-	    Body block = getWorld().createBody(block_def);
-	    block.createFixture(block_shape,5).m_restitution=0.5f;
+	    createRandomBlock();
 	    
 	    
     	//BALL
@@ -72,7 +71,7 @@ public class PhysicsWorld{
 	    circle.m_radius=1;
 	    BodyDef circleDef = new BodyDef();
 	    circleDef.type = BodyType.DYNAMIC;
-	    circleDef.position.set(10, 10);
+	    circleDef.position.set(15, 10);
 	    circleDef.linearVelocity=new Vec2(0,10);
 	    circleDef.allowSleep = false;
 	    circleDef.userData="circle";
@@ -136,13 +135,42 @@ public class PhysicsWorld{
 	  
 	  public void checkBlocks(){
 		  Body block = m_world.getBodyList();
+		  boolean needBlock = true;
 		  while(block != null){
 			  if(block.m_userData=="block"){
 				  checkBlockCollision(block);
+				  needBlock = false;
+			  }
+			  else if(block.m_userData==DESTROY){
+				  m_world.destroyBody(block);
 			  }
 			  block=block.getNext();
 		  }
+		  
+		  if(needBlock){
+			  if(random.nextInt(75) == 0)
+				  createRandomBlock();
+		  }
 	  }
+	  
+	  private void createRandomBlock(){
+		  PolygonShape block_shape = new PolygonShape();
+		  block_shape.setAsBox(2, 1);
+		  BodyDef block_def = new BodyDef();
+		  block_def.type = BodyType.KINEMATIC;
+		    
+		  Vec2 position = new Vec2(2 + random.nextInt((int)WIDTH-4),2+random.nextInt((int)HEIGHT/3));
+		  block_def.position.set(position);
+		    
+		  Vec2 velocity = new Vec2(1+random.nextInt(8),0);
+		  block_def.linearVelocity.set(velocity);
+		    
+		  block_def.allowSleep = false;
+		  block_def.userData="block";
+		  Body block = getWorld().createBody(block_def);
+		  block.createFixture(block_shape,5).m_restitution=0.5f;
+	  }
+	  
 	  //Needed as blocks are kinematic
 	  public void checkBlockCollision(Body block){
 		  PolygonShape polygon = (PolygonShape)block.getFixtureList().getShape();

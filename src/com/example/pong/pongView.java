@@ -229,6 +229,7 @@ public class pongView extends View{
 		while(list!=null){
 
 		 if(list.m_userData=="circle"){//draw the circles
+			 p.setColor(Color.BLACK);
 			 canvas.drawCircle(toScreenX(list.getPosition().x),toScreenY(list.getPosition().y),
 					 (int)(Math.sqrt((screenWidth*screenHeight)/800.0)), p);
 		 } 
