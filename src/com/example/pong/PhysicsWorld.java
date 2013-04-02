@@ -35,6 +35,9 @@ public class PhysicsWorld{
 	private Random random;
 
 
+	public static boolean winner=false;
+
+
 	public PhysicsWorld(){
 		this.random = new Random();
 		 m_world = new World(new Vec2(0,0));
@@ -78,6 +81,7 @@ public class PhysicsWorld{
 	    circleDef.linearVelocity=new Vec2(0,10);
 	    circleDef.allowSleep = false;
 	    circleDef.userData="circle";
+	    circleDef.bullet=true;
 	    Body circleBody = getWorld().createBody(circleDef);
 	    circleBody.createFixture(circle, 5.0f);
 	   
@@ -161,6 +165,7 @@ public class PhysicsWorld{
 	  public void update(){
 		  m_world.step(timeStep, velocityIterations, positionIterations);
 		  checkBlocks();
+		  
 		  
 	  }
 	  

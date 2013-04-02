@@ -22,6 +22,14 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity
+            android:name="com.example.pong.WinnerActivity"
+            android:label="@string/title_activity_winner"
+            android:parentActivityName="com.example.pong.Pong" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.example.pong.Pong" />
+        </activity>
     </application>
 
 </manifest>

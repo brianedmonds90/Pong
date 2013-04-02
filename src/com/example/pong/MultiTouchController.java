@@ -120,7 +120,10 @@ class MultiTouchController{//Used to process the android API touch events for ea
      return this.mTContainer.size(); 
   }
   Vec2 getDiskAt(int index){
+	  
     return this.mTContainer.get(index).disk;
+
+
   }
   MultiTouch getAt(int index){
    return mTContainer.get(index); 

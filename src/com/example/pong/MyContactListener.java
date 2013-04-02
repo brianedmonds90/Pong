@@ -57,10 +57,9 @@ public class MyContactListener implements ContactListener{
 			//if the ball is colliding with a goal
 			if(userDataA=="goal"&&userDataB=="circle"){
 					//player 2 has scored
-				
-//				if(scoreboard.isP2Win()){	
-//					helper.playerWon();
-//				}
+				if(scoreboard.isP1Win()){	
+					PhysicsWorld.winner=true;
+				}
 				
 			}
 		  	if(userDataA == "block" && userDataB =="circle"){

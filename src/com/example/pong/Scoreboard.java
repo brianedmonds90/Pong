@@ -103,7 +103,7 @@ public class Scoreboard {
 		p.setTextSize(fontSize);
 		//draw the p1 score
 		p.setStyle(Paint.Style.FILL);
-		c.drawText(p1ToString(), width - 60, height/2f - 20, p);
+		c.drawText(p1ToString(), 10, height/2f - 20, p);
 
 
 
@@ -111,7 +111,7 @@ public class Scoreboard {
 		p.setColor(Color.BLACK);
 		p.setStrokeWidth(7.5f);
 		p.setStyle(Paint.Style.STROKE);
-		c.drawLine(width - 60, height/2f , width, height/2f, p);
+		c.drawLine(10, height/2f , 150, height/2f, p);
 
 		//draw p2 score
 //		p.setColor(Color.BLUE);

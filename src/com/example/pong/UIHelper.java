@@ -1,12 +1,12 @@
 package com.example.pong;
 
 import org.jbox2d.collision.shapes.PolygonShape;
-import org.jbox2d.common.Rot;
 import org.jbox2d.common.Transform;
 import org.jbox2d.common.Vec2;
 import org.jbox2d.dynamics.Body;
 import org.jbox2d.dynamics.Fixture;
 
+import android.content.Intent;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 
@@ -16,6 +16,7 @@ public class UIHelper {
 	private MultiTouchController mC;
 	public pt a;
 	public Vec2 userVelocity;
+	private Pong pActivity;
 	Vec2 forceLeft,forceRight;
 	public Scoreboard scoreboard;
 	public float ks;
@@ -31,12 +32,12 @@ public class UIHelper {
 			this(game2,pongView,mController);
 			scoreboard=scoreboard2;
 	}
+
 	public void userMove(MultiTouch m){
 		Body paddle=game.getBodyList();
 		while(paddle!=null){
 			if(paddle.m_userData=="box"){
 				paddle.setTransform(toPhysicsCoords(m.disk), paddle.getAngle());
-			//	paddle.setLinearVelocity(new Vec2(10,10));
 				return;
 			}
 			paddle=paddle.getNext();
@@ -117,15 +118,8 @@ public class UIHelper {
 	public void setContactListener(){
 		game.getWorld().setContactListener(new MyContactListener(scoreboard));
 	}
-	public void serveBall(int player){//called after score to serve the ball to the player that just scored
-		if(player==2){//serve the ball to player 1
-			game.serveBall(new Vec2(10,0));
-		}
-	}
-	public void playerWon(){
-		game.destroyBall();
-		game.centerBall();
-	}
+
+
 
 	public Vec2 getleftCoord(Body paddle){//Gets the left coordinate of the paddle to apply a force to
 		Fixture fixture=paddle.getFixtureList();
@@ -240,5 +234,8 @@ public class UIHelper {
 		b.applyLinearImpulse(dR.mul(ks),rPaddle);
 		b.m_linearDamping=3;
 		b.m_angularDamping=3;
+	}
+	public void setPActivity(Pong p){
+		pActivity=p;
 	}
 }

@@ -9,9 +9,11 @@ import org.jbox2d.dynamics.Body;
 import org.jbox2d.dynamics.Fixture;
 
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.graphics.drawable.Drawable;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.VelocityTracker;
@@ -26,40 +28,44 @@ public class pongView extends View{
 	Vec2 v,angular;
 	Vec2 lP,rP;
 	boolean moveL,moveR;
-	boolean runGame;
+	boolean winner;
+	private Drawable apple;
 	Scoreboard scoreboard;
+	public Pong pActivity;
 	float screenWidth,screenHeight;//Height and width in pixels
 	UIHelper ui;
 	VelocityTracker vTracker;
+	public boolean drawWinScreen;
 	public pongView(Context context, PhysicsWorld pWorld){
 		this(context);
 		this.pWorld = pWorld;
 	}
-	
 	 public pongView(Context context) {
 	    	this(context, null, 0);	
-	    }  
-	    public pongView(Context context, AttributeSet attrs) {
+	 }  
+	 public pongView(Context context, AttributeSet attrs) {
 	        this(context, attrs, 0);
+	 }
+	 public pongView(Context context, AttributeSet attrs, int defStyle) {
+	    super(context, attrs, defStyle); 
+	    mController=new MultiTouchController();
+	    //mController.init();
+	    p=new Paint();
+	    game=new PhysicsWorld();
+	    scoreboard = new Scoreboard(new Vec2(20,20),0,0,1);
+	    game.setScoreboard(scoreboard);
+	    game.init();
+	    ui=new UIHelper(game,this,mController,scoreboard);
+	    ui.setContactListener();
+	    lP=new Vec2();
+	    drawWinScreen=false;
+	    apple = context.getResources().getDrawable(
+	                    R.drawable.lander_crashed);
 	    }
-	    public pongView(Context context, AttributeSet attrs, int defStyle) {
-	        super(context, attrs, defStyle); 
-	        mController=new MultiTouchController();
-	        //mController.init();
-	        p=new Paint();
-	        game=new PhysicsWorld();
-	        scoreboard = new Scoreboard(new Vec2(20,20),0,0,3);
-	        game.setScoreboard(scoreboard);
-	        game.init();
-	        ui=new UIHelper(game,this,mController,scoreboard);
-	        ui.setContactListener();
-	        runGame=true;
-	        lP=new Vec2();
-	    }
-	    @Override
+
+		@Override
 	    public void onDraw(Canvas canvas) {
 	    	game.update();
-	    	
 	    	super.onDraw(canvas);
 		    canvas.save();
 		    scoreboard.draw(canvas,
@@ -68,7 +74,6 @@ public class pongView extends View{
 		    setScreenWidth(canvas);
 		    setScreenHeight(canvas);
 		    drawGame(canvas, p);
-		    
 		    //TODO these need to be refactored into a single draw
 		    Body paddle=ui.getPaddle();
 		    lP=ui.getleftCoord(paddle);
@@ -77,6 +82,9 @@ public class pongView extends View{
 		    ui.showPhysVec(lP, canvas, p);
 		    p.setColor(Color.BLUE);
 		    ui.showPhysVec(rP,canvas,p);
+	        
+
+		    
 		    try{
 		    	if(mController.getDiskAt(0).x<mController.getDiskAt(1).x){
 		    		canvas.drawLine(toScreenX(lP.x),toScreenY(lP.y),
@@ -113,9 +121,23 @@ public class pongView extends View{
 		    catch(Exception e){
 		    	e.printStackTrace();
 		    }
-		    canvas.restore();
-	       
+		   
+	       if(game.winner){
+//	    	   p.setColor(Color.BLACK);
+//	    	   canvas.drawCircle(200, 200, 100, p);
+	    	   try{
+	    	   Intent gameOverScreen = new Intent(pActivity, WinnerActivity.class);
+	    	   pActivity.startActivity(gameOverScreen);
+	    	   }
+	    	   catch(Exception e){
+	    		   
+	    	   }
+	       }
+	       else{
+	       canvas.restore();
 	       invalidate();
+	       }
+	    	
 	    }
 	 @Override
 	 public boolean onTouchEvent(MotionEvent me) {
@@ -123,7 +145,13 @@ public class pongView extends View{
 		vTracker=VelocityTracker.obtain();
 		if(mController.size()==1){
 			 Body paddle=ui.getPaddle();
-	    	  float distance=ui.getleftCoord(paddle).disTo(mController.getDiskAt(0));
+			 float distance=0;
+			 try{
+				 distance=ui.getleftCoord(paddle).disTo(mController.getDiskAt(0));
+			 }
+			 catch(Exception e){
+				 e.printStackTrace();
+			 }
 	    	  if(distance<ui.getRightCoord(paddle).disTo(mController.getDiskAt(0)))
 	    	  {
 	    		  moveL=true;
@@ -136,43 +164,30 @@ public class pongView extends View{
 		}
 		if (action==1) {
 		        mController.touch(me, whichFinger(me)); //Register the touch event
-//		        if(mController.size()==2){
-//		        	mid=mid.P(mController.getDiskAt(0), mController.getDiskAt(1));
-//		        	ui.userMove(mid);
-//		        }
-		        v=velocity(me);
-		        invalidate();
+		     //   invalidate();
 		    }
 		    else if (action==0) {
 		      mController.lift(whichFinger(me)); //Register the lift event
 		     moveL=false;
 		     moveR=false;
 		 
-		      invalidate();
+		   //   invalidate();
 		    }
 		    else if (action==2) {
 		      mController.motion(me);//Register the motion event
 		      if(mController.size()==2){
-//		    	  v=velocity(me);
-//		    	  angular =velocity(me,1);
-//		    	  ui.userMove(v,angular);
 		    	  ui.move(mController.getDiskAt(0),mController.getDiskAt(1));
 		        }
 		      else{
-		    	  //Body paddle=ui.getPaddle();
-		    	  //float distance=ui.getleftCoord(paddle).disTo(mController.getDiskAt(0));
 		    	  if(moveL)
 		    	  {
 		    		  ui.moveL(mController.getDiskAt(0));
 		    	  }
-		    	  else{
+		    	  else if(moveR){
 		    		  ui.moveR(mController.getDiskAt(0));
 		    	  }
-		    	  //ui.move(mController.getDiskAt(0));
-//		    	  v=velocity(me);
-//		    	  ui.userMove(v);
 		      }
-		      invalidate();
+		     // invalidate();
 		    }
 	    return true;
 	 }
@@ -211,38 +226,21 @@ public class pongView extends View{
 	
 	//***Drawing Functions
 	void drawGame(Canvas canvas,Paint p){
-//		
-//		Vec2 v=new Vec2(200,300);
-//		Vec2 v1=new Vec2(300,300);
-//		Vec2 v2=v.rotate(v,30.0f,v1);
-//		p.setColor(Color.BLACK);
-//		
-//		showVec2(v,canvas,p);
-//		p.setColor(Color.BLUE);
-//		showVec2(v1,canvas,p);
-//		p.setColor(Color.RED);
-//		showVec2(v2,canvas,p);
-		
-		//Draw the edges of the game surface
-//		ArrayList<EdgeShape> edges = game.getEdges();
-//		p.setColor(Color.BLUE);
-//		p.setStrokeWidth(17.5f);
-//		p.setStyle(Paint.Style.STROKE);
-		
-//		for(EdgeShape edge : game.getEdges()){
-//			Vec2 v1 = edge.m_vertex1;
-//			Vec2 v2 = edge.m_vertex2;
-//			canvas.drawLine(toScreenX(v1.x), toScreenY(v1.y), toScreenX(v2.x), toScreenY(v2.y), p);
-//		}
+
 		//End drawing edges
 		
 		Body list=game.getBodyList();
 		
 		p.setStyle(Paint.Style.FILL);
 		while(list!=null){
-
+		
 		 if(list.m_userData=="circle"){//draw the circles
 			 p.setColor(Color.BLACK);
+//			 float xLeft=toScreenX(list.getPosition().x);
+//			 float yLeft=toScreenY(list.getPosition().y);
+//			 float b=(int)Math.sqrt((screenWidth*screenHeight)/800.0)+yLeft;
+//			    apple.setBounds((int)xLeft,(int)yLeft,(int)b,(int)b);
+//		        apple.draw(canvas);
 			 canvas.drawCircle(toScreenX(list.getPosition().x),toScreenY(list.getPosition().y),
 					 (int)(Math.sqrt((screenWidth*screenHeight)/800.0)), p);
 		 } 
@@ -340,9 +338,6 @@ public class pongView extends View{
 			drawSegment(vertices[vertexCount-1], vertices[0], b,c,p);
 		}
 	}
-	
-
-	
 	private float toScreen(float x){
 		return (float) (x*(screenWidth*screenHeight)/800.0);
 	}
@@ -366,5 +361,8 @@ public class pongView extends View{
 	}
 	public void showVec2(Vec2 v,Canvas c, Paint p){
 		c.drawCircle(v.x, v.y,10, p);
+	}
+	public void setUIActivity(Pong p){
+		ui.setPActivity(p);
 	}
 }

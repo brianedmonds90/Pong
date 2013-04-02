@@ -14,23 +14,31 @@ public final class R {
         public static final int boardFontSize=0x7f040000;
     }
     public static final class drawable {
-        public static final int ic_launcher=0x7f020000;
+        public static final int app_lunar_lander=0x7f020000;
+        public static final int ic_launcher=0x7f020001;
+        public static final int lander_crashed=0x7f020002;
+        public static final int lander_firing=0x7f020003;
+        public static final int lander_plain=0x7f020004;
     }
     public static final class id {
-        public static final int button1=0x7f080000;
-        public static final int menu_settings=0x7f080001;
+        public static final int button1=0x7f080001;
+        public static final int menu_settings=0x7f080002;
+        public static final int textView1=0x7f080000;
     }
     public static final class layout {
         public static final int activity_pong=0x7f030000;
-        public static final int start_menu=0x7f030001;
+        public static final int activity_winner=0x7f030001;
+        public static final int start_menu=0x7f030002;
     }
     public static final class menu {
         public static final int activity_pong=0x7f070000;
+        public static final int activity_winner=0x7f070001;
     }
     public static final class string {
         public static final int app_name=0x7f050000;
         public static final int hello_world=0x7f050001;
         public static final int menu_settings=0x7f050002;
+        public static final int title_activity_winner=0x7f050003;
     }
     public static final class style {
         /** 
