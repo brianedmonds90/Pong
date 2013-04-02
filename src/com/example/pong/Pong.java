@@ -13,9 +13,11 @@ public class Pong extends Activity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		//setContentView(R.layout.activity_pong);
+
+		
 		pView=new pongView(getBaseContext());
 		setContentView(pView); 
+		
 	}
 
 	@Override
@@ -24,7 +26,5 @@ public class Pong extends Activity {
 		getMenuInflater().inflate(R.menu.activity_pong, menu);
 		return true;
 	}
- 
-
 
 }

@@ -57,9 +57,12 @@ public class Scoreboard {
 	}
 
 	/** Game Logic Methods **/
-	public void incP1Score(){
-		p1Score++;
+	public void incScore(){
+		p1Score+=2;
 		
+	}
+	public void decScore(){
+		p1Score--;
 	}
 	public void incP2Score(){
 		p2Score++;
@@ -80,7 +83,7 @@ public class Scoreboard {
 		else
 			return false;
 	}
-
+	
 	/** String Manipulation Methods **/
 	public String p1ToString(){
 		return Integer.toString(p1Score);
@@ -111,9 +114,9 @@ public class Scoreboard {
 		c.drawLine(width - 60, height/2f , width, height/2f, p);
 
 		//draw p2 score
-		p.setColor(Color.BLUE);
-		p.setStyle(Paint.Style.FILL);
-		c.drawText(p2ToString(), width - 60, height/2f + 60, p);
+//		p.setColor(Color.BLUE);
+//		p.setStyle(Paint.Style.FILL);
+//		c.drawText(p2ToString(), width - 60, height/2f + 60, p);
 	}
 
 

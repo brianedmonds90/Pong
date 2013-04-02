@@ -9,7 +9,6 @@ public class MyContactListener implements ContactListener{
 
 	public Scoreboard scoreboard;
 	public UIHelper helper;
-	
 	MyContactListener(){
 		
 	}
@@ -25,42 +24,50 @@ public class MyContactListener implements ContactListener{
 		Contact c_list = contact;
 		//iterate through the LL
 		while(c_list != null){
-			
 			String userDataA=(String) c_list.getFixtureA().m_body.m_userData;
 			String userDataB=(String) c_list.getFixtureB().m_body.m_userData;
 			//if the ball is colliding with a goal
-			if(userDataA=="goal 1"&&userDataB=="circle"){
+			if(userDataA=="goal"&&userDataB=="circle"){
 					//player 2 has scored
-				scoreboard.incP2Score();
-				if(scoreboard.isP2Win()){
+					scoreboard.incScore();
 					
-					//helper.playerWon();
-					
-					//helper.serveBall(2);
-					//do something
-				}
 			}
 			else if(userDataA=="goal 2"&&userDataB=="circle"){
-				//player 2 has scored
-				scoreboard.incP1Score();
-				if(scoreboard.isP1Win()){
-					//do something
-				}
-			}
-			else if(userDataB=="goal 1"&&userDataA=="circle"){
-				scoreboard.incP2Score();
+				//ball has hit the ground
+				scoreboard.decScore();
 			}
 			else if(userDataB=="goal 2"&&userDataA=="circle"){
-				scoreboard.incP1Score();
+				//ball 2
+				scoreboard.decScore();
+			}
+			else if(userDataB=="goal"&&userDataA=="circle"){
+					scoreboard.incScore();
 			}
 			c_list=c_list.m_next;
 		}
 	}
 	@Override
 	public void endContact(Contact contact) {
-		// TODO Auto-generated method stub
-		
+		Contact c_list = contact;
+		//iterate through the LL
+		while(c_list != null){
+			String userDataA=(String) c_list.getFixtureA().m_body.m_userData;
+			String userDataB=(String) c_list.getFixtureB().m_body.m_userData;
+			//if the ball is colliding with a goal
+			if(userDataA=="goal"&&userDataB=="circle"){
+					//player 2 has scored
+				if(scoreboard.isP2Win()){	
+					helper.playerWon();
+				}
+			}
+		  	if(userDataA == "block" && userDataB =="circle"){
+			       c_list.getFixtureA().m_body.m_userData = PhysicsWorld.DESTROY;
+		  		}
+				      c_list = c_list.getNext();
+			 }
+			c_list=c_list.m_next;
 	}
+	
 
 	@Override
 	public void preSolve(Contact contact, Manifold oldManifold) {

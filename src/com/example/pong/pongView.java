@@ -31,7 +31,6 @@ public class pongView extends View{
 	float screenWidth,screenHeight;//Height and width in pixels
 	UIHelper ui;
 	VelocityTracker vTracker;
-	//MultiTouch m;
 	public pongView(Context context, PhysicsWorld pWorld){
 		this(context);
 		this.pWorld = pWorld;
@@ -77,20 +76,35 @@ public class pongView extends View{
 		    p.setColor(Color.BLUE);
 		    ui.showPhysVec(rP,canvas,p);
 		    try{
-		    	canvas.drawLine(toScreenX(lP.x),toScreenY(lP.y),
-		    			toScreenX(ui.forceLeft.x),toScreenY(ui.forceLeft.y),p);
+		    	if(mController.getDiskAt(0).x<mController.getDiskAt(1).x){
+		    		canvas.drawLine(toScreenX(lP.x),toScreenY(lP.y),
+		    			mController.getDiskAt(0).x,mController.getDiskAt(0).y,p);
+		    		try{
+				    	canvas.drawLine(toScreenX(rP.x),toScreenY(rP.y),
+				    			mController.getDiskAt(1).x,mController.getDiskAt(1).y,p);
+				    }
+				    catch(Exception e){
+				    	e.printStackTrace();
+				    }
+		    	}
+		    	else{
+		    		canvas.drawLine(toScreenX(lP.x),toScreenY(lP.y),
+			    			mController.getDiskAt(1).x,mController.getDiskAt(1).y,p);
+			    		try{
+					    	canvas.drawLine(toScreenX(rP.x),toScreenY(rP.y),
+					    			mController.getDiskAt(0).x,mController.getDiskAt(0).y,p);
+			    		}
+			    		   catch(Exception e)
+			   		    {
+			   		    	e.printStackTrace();
+			   		    }
+		    	}
 		    }
 		    catch(Exception e)
 		    {
 		    	e.printStackTrace();
 		    }
-		    try{
-		    	canvas.drawLine(toScreenX(rP.x),toScreenY(rP.y),
-		    			toScreenX(ui.forceRight.x),toScreenY(ui.forceRight.y),p);
-		    }
-		    catch(Exception e){
-		    	e.printStackTrace();
-		    }
+		    
 		    try{
 		    	mController.show(canvas);
 		    }
@@ -131,8 +145,7 @@ public class pongView extends View{
 		      mController.lift(whichFinger(me)); //Register the lift event
 		     moveL=false;
 		     moveR=false;
-		     // v=velocity(me);
-		     // ui.userMove(v);
+		 
 		      invalidate();
 		    }
 		    else if (action==2) {
@@ -227,6 +240,7 @@ public class pongView extends View{
 		while(list!=null){
 
 		 if(list.m_userData=="circle"){//draw the circles
+			 p.setColor(Color.BLACK);
 			 canvas.drawCircle(toScreenX(list.getPosition().x),toScreenY(list.getPosition().y),
 					 (int)(Math.sqrt((screenWidth*screenHeight)/800.0)), p);
 		 } 
@@ -235,9 +249,45 @@ public class pongView extends View{
 			 drawPaddle(list,canvas,p);
 			 
 		 }
+		 if(list.m_userData=="goalBarrier"){
+			 p.setColor(Color.YELLOW);
+			 drawBlock(list,canvas,p);
+		 }
+		 if(list.m_userData=="goal"){
+			 p.setColor(Color.MAGENTA);
+			 drawBlock(list,canvas,p);
+		 }
+		 if(list.m_userData=="block"){
+			       p.setColor(Color.GREEN);
+			       drawBlock(list,canvas,p);
+		 }
 		 list=list.getNext();
 		}
 	}
+	 void drawBlock(Body block, Canvas c, Paint p){
+	    Fixture fixture = block.getFixtureList();
+	    PolygonShape polygon = (PolygonShape)fixture.getShape();
+	    
+	    int v_count = polygon.m_count;
+	    //this holds the vertices in world space
+	    Vec2[] vertices = new Vec2[v_count];
+	    Transform t=block.getTransform();
+		    Vec2 temp;
+		    for(int i=0; i<v_count; i++){
+		      vertices[i]=polygon.m_vertices[i].translate(t.p);
+		      temp = vertices[i];
+		      vertices[i]=rotate(temp,t.q,block);
+		    }
+		    drawFilledBlock(vertices,c,p);
+	  }
+	   public void drawFilledBlock(Vec2[] vertices, Canvas c, Paint p){
+		     //vertex order for block
+		     // 0 ---- 1
+		     // 3 ---- 2
+		     p.setStyle(Paint.Style.FILL);
+		     c.drawRect(toScreenX(vertices[0].x),toScreenY(vertices[0].y)
+		         ,toScreenX(vertices[2].x),toScreenY(vertices[2].y), p);
+		   }
 	private float toScreenX(float x){	  
 	  return (float) (x*(screenWidth/20.0));
 	}

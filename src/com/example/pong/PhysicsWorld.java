@@ -1,5 +1,7 @@
 package com.example.pong;
 
+import java.util.Random;
+
 import org.jbox2d.collision.shapes.CircleShape;
 import org.jbox2d.collision.shapes.EdgeShape;
 import org.jbox2d.collision.shapes.PolygonShape;
@@ -25,7 +27,10 @@ public class PhysicsWorld{
 	private Fixture ball;
 	private Fixture p1Goal;
 	private Fixture p2Goal;
+	private Random random;
+	public static final String DESTROY = "dest";
 	public PhysicsWorld(){
+		this.random = new Random();
 		 m_world = new World(new Vec2(0,0));
 		 timeStep= 1.0f / 60.0f;
 	}
@@ -37,17 +42,17 @@ public class PhysicsWorld{
 		 
 	}
 	void init(){
+		
+
 	    for (int i = 1; i <2; i++) {
 		      PolygonShape polygonShape = new PolygonShape();
-		      polygonShape.setAsBox(5,.5f);
-		      
+		      polygonShape.setAsBox(5,.5f);  
 		      BodyDef bodyDef = new BodyDef();
 		      bodyDef.type = BodyType.DYNAMIC;
-		      bodyDef.position.set(i+10, 10);
+		      bodyDef.position.set(i+10, 25);
 		      bodyDef.angle = (float) (Math.PI / 4 * i);
 		      bodyDef.allowSleep = false;
 		      bodyDef.userData="box";
-		      
 		      Body body = getWorld().createBody(bodyDef);
 		      body.createFixture(polygonShape, 5.0f).m_restitution=(float) .75;
 			}
@@ -100,6 +105,45 @@ public class PhysicsWorld{
 			edgeBody3.createFixture(edge3, 0).m_restitution=1;
 			
 			//END GAME SURFACE EDGES
+			
+			//Goal
+			for(int i=0;i<2;i++){
+			  PolygonShape polygonShape = new PolygonShape();
+		      polygonShape.setAsBox(.5f,3);
+		      BodyDef bodyDef = new BodyDef();
+		      bodyDef.type = BodyType.STATIC;
+		      bodyDef.position.set(7+i*5, 0);
+		      bodyDef.angle = (float) (0);
+		      bodyDef.allowSleep = false;
+		      bodyDef.userData="goalBarrier";
+		      
+		      Body body = getWorld().createBody(bodyDef);
+		      body.createFixture(polygonShape, 5.0f).m_restitution=(float) .75;
+			}
+			PolygonShape polygonShape = new PolygonShape();
+		    polygonShape.setAsBox(3,1);
+		    BodyDef bodyDef = new BodyDef();
+		    bodyDef.type = BodyType.STATIC;
+		    bodyDef.position.set(9.5f, 0);
+		    bodyDef.angle = (float) (0);
+		    bodyDef.allowSleep = false;
+		    bodyDef.userData="goal";
+		      
+		    Body body = getWorld().createBody(bodyDef);
+		    body.createFixture(polygonShape, 5.0f).m_restitution=(float) .75;
+		      
+		    //Blocking Box
+		    
+		    PolygonShape block_shape = new PolygonShape();
+		    block_shape.setAsBox(2, 1);
+		    BodyDef block_def = new BodyDef();
+		    block_def.type = BodyType.KINEMATIC;
+		    block_def.position.set(4,8);
+		    block_def.linearVelocity.set(new Vec2(2,0));
+		    block_def.allowSleep = false;
+		    block_def.userData="block";
+		    Body block = getWorld().createBody(block_def);
+		    block.createFixture(block_shape,5).m_restitution=0.5f;
 	}
 	/**
 	   * Gets the current world

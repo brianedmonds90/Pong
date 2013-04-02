@@ -124,6 +124,7 @@ public class UIHelper {
 	}
 	public void playerWon(){
 		game.destroyBall();
+		game.centerBall();
 	}
 
 	public Vec2 getleftCoord(Body paddle){//Gets the left coordinate of the paddle to apply a force to
@@ -186,9 +187,7 @@ public class UIHelper {
 		Vec2 rPaddle= getRightCoord(b);
 		float distance=finger.disTo(lPaddle);
 		if(finger.disTo(rPaddle)<distance){
-			
 			Vec2 dR=finger.sub(rPaddle);
-			
 			b.applyLinearImpulse(dR.mul(ks),rPaddle);
 		}
 		else{
