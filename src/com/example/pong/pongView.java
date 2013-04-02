@@ -68,6 +68,8 @@ public class pongView extends View{
 		    setScreenWidth(canvas);
 		    setScreenHeight(canvas);
 		    drawGame(canvas, p);
+		    
+		    //TODO these need to be refactored into a single draw
 		    Body paddle=ui.getPaddle();
 		    lP=ui.getleftCoord(paddle);
 		    rP=ui.getRightCoord(paddle);
@@ -249,6 +251,7 @@ public class pongView extends View{
 			 drawPaddle(list,canvas,p);
 			 
 		 }
+
 		 if(list.m_userData=="goalBarrier"){
 			 p.setColor(Color.YELLOW);
 			 drawBlock(list,canvas,p);
@@ -337,6 +340,9 @@ public class pongView extends View{
 			drawSegment(vertices[vertexCount-1], vertices[0], b,c,p);
 		}
 	}
+	
+
+	
 	private float toScreen(float x){
 		return (float) (x*(screenWidth*screenHeight)/800.0);
 	}

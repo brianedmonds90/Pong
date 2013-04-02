@@ -240,5 +240,5 @@ public class UIHelper {
 		b.applyLinearImpulse(dR.mul(ks),rPaddle);
 		b.m_linearDamping=3;
 		b.m_angularDamping=3;
-	}	
+	}
 }
