@@ -601,4 +601,16 @@ public class PolygonShape extends Shape {
     Transform.mulToOutUnsafe(xf, m_centroid, out);
     return out;
   }
+  public float getRightBound(){
+	  return m_vertices[2].x;
+  }
+  public float getBottomBound(){
+	  return m_vertices[2].y;
+  }
+  public float getLeftBound(){
+	  return m_vertices[0].x;
+  }
+  public float getTopBound(){
+	  return m_vertices[0].y;
+  }
 }

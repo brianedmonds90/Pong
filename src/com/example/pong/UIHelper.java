@@ -238,4 +238,5 @@ public class UIHelper {
 	public void setPActivity(Pong p){
 		pActivity=p;
 	}
+	
 }

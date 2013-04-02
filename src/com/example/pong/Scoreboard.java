@@ -99,19 +99,25 @@ public class Scoreboard {
 		float width = c.getWidth();
 		//set up paint
 		Paint p = new Paint();
+		
+		//draw dividing line
+		
+		p.setStrokeWidth(7.5f);
+		p.setStyle(Paint.Style.FILL);
+		p.setColor(Color.WHITE);
+		c.drawRect(0, height/2f-10, 150, height/2f+60, p);
+		
+		//c.drawLine(10, height/2f , 150, height/2f, p);
+		p.setStyle(Paint.Style.STROKE);
 		p.setColor(Color.RED);
 		p.setTextSize(fontSize);
 		//draw the p1 score
 		p.setStyle(Paint.Style.FILL);
-		c.drawText(p1ToString(), 10, height/2f - 20, p);
+		c.drawText(p1ToString(), 10, height/2f+40, p);
 
 
 
-		//draw dividing line
-		p.setColor(Color.BLACK);
-		p.setStrokeWidth(7.5f);
-		p.setStyle(Paint.Style.STROKE);
-		c.drawLine(10, height/2f , 150, height/2f, p);
+	
 
 		//draw p2 score
 //		p.setColor(Color.BLUE);

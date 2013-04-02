@@ -1,7 +1,7 @@
 package com.example.pong;
 import android.app.Activity;
+import android.content.res.Configuration;
 import android.os.Bundle;
-import android.os.Handler;
 import android.view.Menu;
 
 public class Pong extends Activity {
@@ -26,4 +26,9 @@ public class Pong extends Activity {
 		super.onResume();
 		PhysicsWorld.winner=false;
 	}
+	 public void onConfigurationChanged(Configuration newConfig) {
+		 super.onConfigurationChanged(newConfig);
+	        newConfig.orientation = Configuration.ORIENTATION_PORTRAIT;
+	        
+	    }
 }

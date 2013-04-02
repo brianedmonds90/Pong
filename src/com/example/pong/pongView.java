@@ -10,9 +10,13 @@ import org.jbox2d.dynamics.Fixture;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.graphics.Path;
+import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
@@ -29,13 +33,15 @@ public class pongView extends View{
 	Vec2 lP,rP;
 	boolean moveL,moveR;
 	boolean winner;
-	private Drawable apple;
+	private Drawable apple,cloud;
 	Scoreboard scoreboard;
+	Path gamePiece;
 	public Pong pActivity;
 	float screenWidth,screenHeight;//Height and width in pixels
 	UIHelper ui;
 	VelocityTracker vTracker;
 	public boolean drawWinScreen;
+	Bitmap background = BitmapFactory.decodeResource(getResources(), R.drawable.green_grass);
 	public pongView(Context context, PhysicsWorld pWorld){
 		this(context);
 		this.pWorld = pWorld;
@@ -52,7 +58,7 @@ public class pongView extends View{
 	    //mController.init();
 	    p=new Paint();
 	    game=new PhysicsWorld();
-	    scoreboard = new Scoreboard(new Vec2(20,20),0,0,1);
+	    scoreboard = new Scoreboard(new Vec2(20,20),0,0,10);
 	    game.setScoreboard(scoreboard);
 	    game.init();
 	    ui=new UIHelper(game,this,mController,scoreboard);
@@ -60,13 +66,22 @@ public class pongView extends View{
 	    lP=new Vec2();
 	    drawWinScreen=false;
 	    apple = context.getResources().getDrawable(
-	                    R.drawable.lander_crashed);
+	                    R.drawable.apple);
+	    cloud= context.getResources().getDrawable(
+                R.drawable.cloud);
+	    gamePiece=new Path();
 	    }
-
 		@Override
 	    public void onDraw(Canvas canvas) {
 	    	game.update();
 	    	super.onDraw(canvas);
+	    //	Draw the backround-below method is too slow
+	    	
+//	    	
+	    	Rect dest = new Rect(0, 0, getWidth(), getHeight());
+	    	Paint paint = new Paint();
+	    	paint.setFilterBitmap(true);
+	    	canvas.drawBitmap(background, null, dest, paint);
 		    canvas.save();
 		    scoreboard.draw(canvas,
 		    		(float)getResources().getDimensionPixelSize(R.dimen.boardFontSize));
@@ -86,6 +101,7 @@ public class pongView extends View{
 
 		    
 		    try{
+		    	p.setStrokeWidth(5);
 		    	if(mController.getDiskAt(0).x<mController.getDiskAt(1).x){
 		    		canvas.drawLine(toScreenX(lP.x),toScreenY(lP.y),
 		    			mController.getDiskAt(0).x,mController.getDiskAt(0).y,p);
@@ -235,7 +251,7 @@ public class pongView extends View{
 		while(list!=null){
 		
 		 if(list.m_userData=="circle"){//draw the circles
-			 p.setColor(Color.BLACK);
+			 p.setColor(Color.RED);
 //			 float xLeft=toScreenX(list.getPosition().x);
 //			 float yLeft=toScreenY(list.getPosition().y);
 //			 float b=(int)Math.sqrt((screenWidth*screenHeight)/800.0)+yLeft;
@@ -245,9 +261,11 @@ public class pongView extends View{
 					 (int)(Math.sqrt((screenWidth*screenHeight)/800.0)), p);
 		 } 
 		 if(list.m_userData=="box"){//Draw the boxes
-			 p.setColor(Color.RED);
-			 drawPaddle(list,canvas,p);
 			 
+			 p.setColor(Color.RED);
+			 gamePiece=new Path();
+			 drawPaddle(list,canvas,p);
+			
 		 }
 
 		 if(list.m_userData=="goalBarrier"){
@@ -259,13 +277,27 @@ public class pongView extends View{
 			 drawBlock(list,canvas,p);
 		 }
 		 if(list.m_userData=="block"){
-			       p.setColor(Color.GREEN);
-			       drawBlock(list,canvas,p);
+		//	 p.setColor(Color.GREEN);
+			// drawBlock(list,canvas,p);
+			 drawCloud(list,canvas ,p);
 		 }
 		 list=list.getNext();
 		}
 	}
-	 void drawBlock(Body block, Canvas c, Paint p){
+	 private void drawCloud(Body list, Canvas canvas, Paint p2) {
+		// TODO Auto-generated method stub
+		
+		 Fixture fixture = list.getFixtureList();
+		 PolygonShape polygon = (PolygonShape)fixture.getShape();
+		 float yTop=toScreenY(list.getTransform().p.y+polygon.getTopBound());
+		 float xLeft=toScreenX(list.getTransform().p.x+polygon.getLeftBound());
+		 float xRight=toScreenX(list.getTransform().p.x+polygon.getRightBound());
+		 float yBottom=toScreenY(list.getTransform().p.y+polygon.getBottomBound());
+		 cloud.setBounds((int)xLeft-5, (int)yTop-5, (int)xRight+5,(int)yBottom+5);
+		 cloud.draw(canvas);
+		 
+	}
+	void drawBlock(Body block, Canvas c, Paint p){
 	    Fixture fixture = block.getFixtureList();
 	    PolygonShape polygon = (PolygonShape)fixture.getShape();
 	    
@@ -321,7 +353,17 @@ public class pongView extends View{
 	      vTemp=vertices[i];
 	      vertices[i]=rotate(vTemp, t.q, paddle);
 	    }
+	   // drawFilledPaddle(vertices,vertexCount,c,p);
 	    drawPolygon(vertices,vertexCount,paddle,c,p);
+	}
+	private void drawFilledPaddle(Vec2[] vertices, int vertexCount, Canvas c,
+			Paint p) {
+		//gamePiece.moveTo(vertices[0].x, vertices[0].y);
+		for(int i=0;i<vertexCount;i++){ 
+			gamePiece.lineTo(toScreenX(vertices[i].x), toScreenY(vertices[i].y));
+		}
+		p.setStyle(Paint.Style.FILL);
+		c.drawPath(gamePiece,p);
 	}
 	public void drawPolygon(Vec2[] vertices, int vertexCount,Body b, Canvas c, Paint p){
 		
@@ -342,7 +384,7 @@ public class pongView extends View{
 		return (float) (x*(screenWidth*screenHeight)/800.0);
 	}
 	private void drawSegment(Vec2 vec2, Vec2 vec22,Body body, Canvas c,Paint p) {
-		Transform t=body.getTransform();
+		p.setColor(Color.RED);
 		c.drawLine(toScreenX(vec2.x),toScreenY(vec2.y),
 				toScreenX(vec22.x),toScreenY(vec22.y),p);
 	}

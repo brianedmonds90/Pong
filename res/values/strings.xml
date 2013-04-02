@@ -3,6 +3,8 @@
 
     <string name="app_name">Pong</string>
     <string name="hello_world">WINNER!!</string>
+    <string name="developedBy1">brianedmonds90@gmail.com</string>
+    <string name="developedBy2">michael.sandt@gmail.com</string>
     <string name="menu_settings">Settings</string>
     <string name="title_activity_winner">WinnerActivity</string>
 
