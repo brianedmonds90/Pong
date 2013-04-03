@@ -4810,11 +4810,6 @@ input[type="submit"].btn.btn-mini {
   color: #999999;
 }
 
-.navbar-inverse .brand .active > a{
-  color: #ffffff;
-  background-color: #111111;
-}
-
 .navbar-inverse .navbar-text {
   color: #999999;
 }
